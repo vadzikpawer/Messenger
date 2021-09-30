@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,8 +8,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Test_Web_API.Models
 {
     [Table("Users")]
+    [Serializable]
     public class User
     {
+
         [Column("ID")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -34,6 +37,7 @@ namespace Test_Web_API.Models
         [Column("Email")]
         public string Email { get; set; }
 
-        public List<int> Friends_IDs { get; set; }
+        [Column(TypeName = "nvarchar(max)")]
+        public string Friends_IDs { get; set; }//deserelize to db
     }
 }

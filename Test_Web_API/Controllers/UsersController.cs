@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Test_Web_API.Controllers
             db = context;
             if (!db.Users.Any())
             {
-                db.Users.Add(new User { Name = "test", Pass = "test", Age = 12 });
+                db.Users.Add(new User { Name = "test", Pass = "test", Age = 12});
                 db.Users.Add(new User { Name = "test1", Pass = "test1", Age = 2 });
                 db.SaveChanges();
             }
@@ -48,7 +49,7 @@ namespace Test_Web_API.Controllers
             return new ObjectResult(user);
         }
 
-        [HttpPost("getuser/{id}")]
+        [HttpGet("getuser/{id}")]
         public async Task<ActionResult<User>> Get(int id)
         {
             User user = await db.Users.FirstAsync(x => x.Id == id);
@@ -58,6 +59,27 @@ namespace Test_Web_API.Controllers
             user_out.Age = user.Age;
             user_out.Email = user.Email;
             user_out.Name = user.Name;
+            user_out.Friends_IDs = user.Friends_IDs;
+            
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(user_out);
+        }
+        
+        [HttpGet("finduser/{name}")]
+        public async Task<ActionResult<User>> Get(string name)
+        {
+            User user = await db.Users.FirstAsync(x => x.Name == name);
+
+            User user_out = new Models.User();
+            user_out.Id = user.Id;
+            user_out.Age = user.Age;
+            user_out.Email = user.Email;
+            user_out.Name = user.Name;
+            user_out.Friends_IDs = user.Friends_IDs;
 
             if (user == null)
             {
@@ -67,8 +89,8 @@ namespace Test_Web_API.Controllers
         }
 
         // POST api/users
-        [HttpPost("adduser")]
-        public async Task<ActionResult<User>> Post(User user)
+        [HttpPost("add")]
+        public async Task<ActionResult<User>> Post([FromBody] User user)
         {
             User user_check = await db.Users.FirstAsync<User>(x => x.Name == user.Name || x.Email == user.Email && user.Email != null);
 
@@ -93,6 +115,28 @@ namespace Test_Web_API.Controllers
             }
         }
 
+        [HttpPost("addfriend/id1={id1}&id2={id2}")]
+        public async Task<ActionResult<User>> Post(int id1, int id2)
+        {
+            User user1 = await db.Users.FirstAsync<User>(x => x.Id == id1);
+            User user2 = await db.Users.FirstAsync<User>(x => x.Id == id2);
+
+            List<int> friend_list = IntListToString.StringToList(user1.Friends_IDs);
+            if (friend_list == null) friend_list = new List<int>();
+            friend_list.Add(id2);
+            user1.Friends_IDs = IntListToString.ListToString(friend_list);
+
+            friend_list = IntListToString.StringToList(user2.Friends_IDs);
+            if (friend_list == null) friend_list = new List<int>();
+            friend_list.Add(id1);
+            user2.Friends_IDs = IntListToString.ListToString(friend_list);
+
+            db.Update(user1);
+            db.Update(user2);
+            await db.SaveChangesAsync();
+            return Ok(user1);
+        }
+
         // PUT api/users/
         [HttpPut]
         public async Task<ActionResult<User>> Put(User user)
@@ -106,7 +150,7 @@ namespace Test_Web_API.Controllers
                 return NotFound();
             }
 
-            db.Update(user);
+            db.Users.Update(user);
             await db.SaveChangesAsync();
             return Ok(user);
         }

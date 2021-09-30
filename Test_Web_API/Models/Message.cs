@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Test_Web_API.Models
 {
+    [Serializable]
     [Table("Messages")]
     public class Message
     {
@@ -26,6 +28,7 @@ namespace Test_Web_API.Models
             return $"{From} {To} {Text} {Id}";
         }
 
+        public DateTime dateStapm { get; set; }
         // TODO: add datetime stamp
     }
 }

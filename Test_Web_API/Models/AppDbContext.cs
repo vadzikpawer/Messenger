@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Collections.Generic;
 
 namespace Test_Web_API.Models
 {
@@ -11,5 +13,6 @@ namespace Test_Web_API.Models
 
         public DbSet<User> Users { get; set; }
         public DbSet<Message> Messages { get; set; }
+
     }
 }

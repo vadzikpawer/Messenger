@@ -63,6 +63,7 @@ namespace Test_Web_API.Controllers
                 return BadRequest();
             }
 
+            message.dateStapm = DateTime.UtcNow;
             db.Messages.Add(message);
             await db.SaveChangesAsync();
             return Ok(message);
