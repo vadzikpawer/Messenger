@@ -23,12 +23,13 @@ namespace Test_Web_API.Models
         [Column("Text")]
         public string Text { get; set; }
 
+        [Column("dateStamp")]
+        public DateTime dateStapm { get; set; }
+        // TODO: add datetime stamp
         public override string ToString()
         {
             return $"{From} {To} {Text} {Id}";
         }
-        [Column("Date")]
-        public DateTime dateStapm { get; set; }
-        // TODO: add datetime stamp
+        
     }
 }
