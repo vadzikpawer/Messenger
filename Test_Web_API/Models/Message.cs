@@ -27,7 +27,7 @@ namespace Test_Web_API.Models
         {
             return $"{From} {To} {Text} {Id}";
         }
-
+        [Column("Date")]
         public DateTime dateStapm { get; set; }
         // TODO: add datetime stamp
     }
