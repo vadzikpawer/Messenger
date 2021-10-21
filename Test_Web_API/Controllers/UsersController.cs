@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +19,8 @@ namespace Test_Web_API.Controllers
             db = context;
             if (!db.Users.Any())
             {
-                db.Users.Add(new User { Name = "test", Pass = "test", Age = 12});
-                db.Users.Add(new User { Name = "test1", Pass = "test1", Age = 2 });
+                db.Users.Add(new User { Name = "test", Pass = "test"});
+                db.Users.Add(new User { Name = "test1", Pass = "test1"});
                 db.SaveChanges();
             }
             Console.WriteLine("User controller up");
@@ -32,7 +31,11 @@ namespace Test_Web_API.Controllers
 
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return await db.Users.ToListAsync();
+            List<User> Users = await db.Users.ToListAsync();
+
+            for (int i = 0; i < Users.Count; i++) Users[i].Pass = null;
+
+            return Users;
         }
 
         // GET api/users/
@@ -40,7 +43,7 @@ namespace Test_Web_API.Controllers
         public async Task<ActionResult<User>> Get(User user_in)
         {
 
-            User user = await db.Users.FirstAsync(x => (x.Name == user_in.Name || x.Email == user_in.Email) && x.Pass == user_in.Pass); ;
+            User user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass)); 
 
             if (user == null)
             {
@@ -56,19 +59,16 @@ namespace Test_Web_API.Controllers
 
             User user_out = new Models.User();
             user_out.Id = user.Id;
-            user_out.Age = user.Age;
-            user_out.Email = user.Email;
             user_out.Name = user.Name;
-            user_out.Friends_IDs = user.Friends_IDs;
-            
-            
+
+
             if (user == null)
             {
                 return NotFound();
             }
             return new ObjectResult(user_out);
         }
-        
+/*
         [HttpGet("finduser/{name}")]
         public async Task<ActionResult<User>> Get(string name)
         {
@@ -86,22 +86,12 @@ namespace Test_Web_API.Controllers
                 return NotFound();
             }
             return new ObjectResult(user_out);
-        }
+        }*/
 
         // POST api/users
         [HttpPost("add")]
         public async Task<ActionResult<User>> Post([FromBody] User user)
         {
-            User user_check = await db.Users.FirstAsync<User>(x => x.Name == user.Name || x.Email == user.Email && user.Email != null);
-
-            if (user_check.Name == user.Name)
-            {
-                ModelState.AddModelError("Name", "Пользователь с таким именем уже существует");
-            }
-            else if (user_check.Email == user.Email)
-            {
-                ModelState.AddModelError("Email", "Пользователь с таким Email уже существует");
-            }
 
             if (!ModelState.IsValid)
             {
@@ -115,7 +105,7 @@ namespace Test_Web_API.Controllers
             }
         }
 
-        [HttpPost("addfriend/id1={id1}&id2={id2}")]
+        /*[HttpPost("addfriend/id1={id1}&id2={id2}")]
         public async Task<ActionResult<User>> Post(int id1, int id2)
         {
             User user1 = await db.Users.FirstAsync<User>(x => x.Id == id1);
@@ -135,7 +125,7 @@ namespace Test_Web_API.Controllers
             db.Update(user2);
             await db.SaveChangesAsync();
             return Ok(user1);
-        }
+        }*/
 
         // PUT api/users/
         [HttpPut]
@@ -150,12 +140,14 @@ namespace Test_Web_API.Controllers
                 return NotFound();
             }
 
+            user.Pass = db.Users.First(x => x.Id == user.Id).Pass;
+
             db.Users.Update(user);
             await db.SaveChangesAsync();
             return Ok(user);
         }
 
-        // DELETE api/users/5
+       /* // DELETE api/users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> Delete(int id)
         {
@@ -167,7 +159,7 @@ namespace Test_Web_API.Controllers
             db.Users.Remove(user);
             await db.SaveChangesAsync();
             return Ok(user);
-        }
+        }*/
 
     }
 }

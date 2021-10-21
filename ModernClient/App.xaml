@@ -1,0 +1,27 @@
+﻿<Application x:Class="ModernClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ModernClient"
+             xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
+             xmlns:view="clr-namespace:ModernClient.MVVM1.View"
+             StartupUri="LoginWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./Theme/MenuButtonTheme.xaml"/>
+                <ResourceDictionary Source="./Theme/ContactCard.xaml"/>
+                <ResourceDictionary Source="./Theme/ChatItem.xaml"/>
+                <ResourceDictionary Source="./Theme/MessageBox.xaml"/>
+                <ResourceDictionary Source="./Theme/Stylishscrollbar.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type viewModel:MenuViewModel}">
+                <view:MenuView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
+                <view:LoginView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

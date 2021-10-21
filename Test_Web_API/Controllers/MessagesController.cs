@@ -24,10 +24,10 @@ namespace Test_Web_API.Controllers
             {
                 if (!db.Messages.Any())
                 {
-                    db.Messages.Add(new Message { From = "test", To = "test", Text = "test" });
-                    db.Messages.Add(new Message { From = "test", To = "test", Text = "test1" });
-                    db.Messages.Add(new Message { From = "test", To = "test", Text = "test2" });
-                    db.Messages.Add(new Message { From = "test1", To = "test1", Text = "test1" });
+                    db.Messages.Add(new Message { From = "test1", To = "test2", Text = "test", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = "test2", To = "test1", Text = "test1", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = "test1", To = "test2", Text = "test2", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = "test2", To = "test1", Text = "test3", dateStapm = DateTime.UtcNow });
                     db.SaveChanges();
                 }
 
@@ -43,7 +43,7 @@ namespace Test_Web_API.Controllers
                 Console.WriteLine(message_in);
             }
 
-            List<Message> messages = await db.Messages.Where(x => x.From == message_in.From && x.To == message_in.To).ToListAsync();
+            List<Message> messages = await db.Messages.Where(x => (x.From == message_in.From && x.To == message_in.To) || (x.To == message_in.From && x.From == message_in.To)).ToListAsync();
 
             if (messages == null)
             {

@@ -30,6 +30,6 @@ namespace Test_Web_API.Models
         {
             return $"{From} {To} {Text} {Id}";
         }
-        
+
     }
 }

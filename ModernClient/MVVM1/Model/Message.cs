@@ -1,6 +1,8 @@
-﻿namespace ConsoleApp
-{
+﻿using System;
 
+namespace ModernClient.MVVM1.Model
+{
+    [Serializable]
     public class Message
     {
 
@@ -12,11 +14,12 @@
 
         public string Text { get; set; }
 
+        public DateTime dateStapm { get; set; }
+
         public override string ToString()
         {
             return $"{From} {To} {Text} {Id}";
         }
 
-        // TODO: add datetime stamp
     }
 }

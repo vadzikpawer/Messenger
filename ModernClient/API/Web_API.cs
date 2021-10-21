@@ -1,26 +1,27 @@
 ﻿
+using ModernClient.MVVM1.Model;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace ModernClient
 {
     public class Web_API
     {
         static public User user;
-        static public List<Message> Messages = new List<Message>();
+        static public ObservableCollection<Message> Messages = new ObservableCollection<Message>();
 
         /*Web_API()
         {
 
         }*/
         //Not async
-        public List<Message> GetMessages(Message request_get)
+        public ObservableCollection<Message> GetMessages(Message request_get)
         {
             WebRequest request = WebRequest.Create("http://localhost:5000/api/messages/get");
             request.Method = "POST";
@@ -35,22 +36,22 @@ namespace ConsoleApp
             dataStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(dataStream);
             string responseFromServer = reader.ReadToEnd();
-            Messages = JsonConvert.DeserializeObject<List<Message>>(responseFromServer);
+            Messages = JsonConvert.DeserializeObject<ObservableCollection<Message>>(responseFromServer);
             return Messages;
         }
 
-        public async Task<List<Message>> Async_GetMessages(Message request_get)
+        public async Task<ObservableCollection<Message>> Async_GetMessages(Message request_get)
         {
             var json = JsonConvert.SerializeObject(request_get);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var url = "http://localhost:5000/api/messages/get";
-            using var client = new HttpClient();
+            var client = new HttpClient();
             Console.WriteLine("Response");
             var response = await client.PostAsync(url, data);
 
             string result = response.Content.ReadAsStringAsync().Result;
-            Messages = JsonConvert.DeserializeObject<List<Message>>(result);
+            Messages = JsonConvert.DeserializeObject<ObservableCollection<Message>>(result);
             Console.WriteLine(result.ToString());
             return Messages;
         }
@@ -62,7 +63,7 @@ namespace ConsoleApp
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var url = "http://localhost:5000/api/messages/add";
-            using var client = new HttpClient();
+            var client = new HttpClient();
             //Console.WriteLine("Response");
             var response = await client.PostAsync(url, data);
 
@@ -77,7 +78,7 @@ namespace ConsoleApp
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var url = "http://localhost:5000/api/users/getuser";
-            using var client = new HttpClient();
+            var client = new HttpClient();
             //Console.WriteLine("Response");
             var response = await client.PostAsync(url, data);
 
@@ -92,7 +93,7 @@ namespace ConsoleApp
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var url = "http://localhost:5000/api/users/adduser";
-            using var client = new HttpClient();
+            var client = new HttpClient();
             //Console.WriteLine("Response");
             var response = await client.PostAsync(url, data);
 
