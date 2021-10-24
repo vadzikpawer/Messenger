@@ -6,28 +6,13 @@
         xmlns:local="clr-namespace:ModernClient"
         xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
         xmlns:w="clr-namespace:System.Windows.Workarounds"
-        mc:Ignorable="d"
-        Height="695" Width="1280"
+             
+             mc:Ignorable="d"
         Background="Transparent"
         >
 
     <UserControl.Resources>
-        <Style x:Key="MyFocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Control}">
-                        <Grid Margin="3 2">
-                            <Rectangle Name="r1" StrokeThickness="1" Stroke="Black" StrokeDashArray="2 2"/>
-                            <Border Name="border" Width="{TemplateBinding ActualWidth}" Height="{TemplateBinding ActualHeight}"  CornerRadius="2" BorderThickness="1" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <Style x:Key="ShadowStyle">
-            <Setter Property="Control.Foreground" Value="LightGray" />
-        </Style>
 
         <Style x:Key="InformButton" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -35,7 +20,6 @@
             <Setter Property="FontFamily" Value="Verdana"/>
             <Setter Property="FontSize" Value="11px"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FocusVisualStyle" Value="{StaticResource MyFocusVisual}" />
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#4a70a5"/>
             <Setter Property="Template">
@@ -67,10 +51,6 @@
         </Style>
     </UserControl.Resources>
 
-    <UserControl.DataContext>
-        <viewModel:MainViewModel/>
-    </UserControl.DataContext>
-    
     <Border>
         <Grid Width="auto" Height="auto">
             <Grid.ColumnDefinitions>
@@ -83,7 +63,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            
+
 
             <Button x:Name="Home_button_1" 
                         Style="{StaticResource InformButton}"
@@ -92,11 +72,11 @@
                         Width="100"
                         Grid.Column="1"
                         Grid.Row="0"
-                        Cursor="Hand" Click="Home_button_Click"
+                        Cursor="Hand" 
+                    Click="Home_button_Click"
                         >
-                <Image Source="/Images/logo.png"
-                   RenderOptions.BitmapScalingMode="Fant"
-                   />
+                <Image RenderOptions.BitmapScalingMode="Fant" 
+                       Source="/Images/logo.png"/>
             </Button>
 
             <StackPanel Background="#081117" Grid.Column="0" Grid.Row="0"/>
@@ -110,41 +90,42 @@
                         Background="Green"
                         Margin="18 0 10 0"/>
                 <Border BorderThickness="0">
-                <TextBox x:Name="Username"
-                    Text="Test1"
-                           VerticalAlignment="Center"
+                    <Label x:Name="Username"
+                        Content="{Binding CurrentUser.Name}"
+                        VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Foreground="White"
                         FontSize="20"
                          Background="Transparent"
                          BorderThickness="0"
-                         CaretBrush="White"/>
+                       Width="auto"
+                       Height="35"/>
                 </Border>
                 <Button x:Name="AcceptNik" 
                         Style="{StaticResource InformButton}" 
                         Content="✓" 
-                        
+                        Background="Transparent"
                         Width="30"
                         Height="30"
                         FontWeight="Bold"
-                        FontSize="20">
-                     
+                        FontSize="20"
+                        Cursor="Hand">
+
                 </Button>
                 <Button x:Name="Home_button" 
                         Style="{StaticResource InformButton}"
                         Background="Transparent"
                         BorderThickness="0"
                         Width="30"
-                        Height="25"
-                        
+                        Height="30"
                         Cursor="Hand" 
                         Click="Home_button_Click"
+                        Command="{Binding Home}"
+                        Content="⌂"
+                        FontSize="22"
+                        Margin="0,0,0,0"
                         >
-                    <Image Source="/Images/Home.png"
-                               Width="20"   
-                               Height="20"
-                               RenderOptions.BitmapScalingMode="Fant"
-                               />
+
                 </Button>
             </StackPanel>
             <Border Background="#081117"
@@ -156,7 +137,8 @@
                           BorderThickness="0"
                           Background="Transparent"
                           ItemContainerStyle="{StaticResource ContactCard}" 
-                          SelectionChanged="Users_SelectionChanged">
+                          SelectionChanged="Users_SelectionChanged"
+                          VirtualizingPanel.ScrollUnit="Pixel">
                 </ListView>
             </Border>
 
@@ -165,18 +147,26 @@
                   Grid.Column="1" 
                   Grid.ColumnSpan="2">
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition MaxWidth="500"/>
+                </Grid.ColumnDefinitions>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition/>
+                    <RowDefinition/>
                     <RowDefinition Height="70"/>
                 </Grid.RowDefinitions>
-                
+
                 <Border BorderBrush="#081117"
                         BorderThickness="0, 4, 4, 4"
-                        CornerRadius="0, 25, 25, 0">
+                        CornerRadius="0, 25, 25, 0"
+                        Grid.ColumnSpan="2">
                     <Grid HorizontalAlignment="Stretch"
                           Margin="8">
-                        <Label x:Name= "User2" Content="{Binding SelectedUser.Name}"
+                        <Label x:Name= "User2" 
+                               Content="{Binding SelectedUser.Name}"
                                Foreground="white"
                                FontWeight="Bold"
                                Margin="5,0,5,0"
@@ -184,19 +174,26 @@
                     </Grid>
                 </Border>
 
-     
-                <ListView  x:Name="Chat"
+
+                <ListView x:Name="Chat"
                           ItemsSource="{Binding SelectedUser.Messages}"
                           Background="Transparent"
                           BorderThickness="0"
                           Margin="8,0,0,0"
                           Grid.Row="1"
+                          Grid.RowSpan="2"
+                          Grid.ColumnSpan="2"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
                           ItemContainerStyle="{StaticResource ChatItem}"
-                           w:ListView.AutoScroll ="true">
-                </ListView>
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          w:ListView.AutoScroll="True"
+                         />
 
-                <Grid  
-                      Grid.Row="2">
+
+
+                <Grid Grid.Row="3"
+                      Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="90"/>
@@ -211,37 +208,88 @@
                                 Orientation="Horizontal"
                                 Grid.Column="1"
                                 Margin="0,0,16,0">
-                        <Button  Style="{StaticResource InformButton}"
+                        <Button x:Name="StickerMenu"  
+                                Style="{StaticResource InformButton}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="30"
+                                Height="25"
+                                Command="{Binding SendSticker}"
+                                Cursor="Hand" Click="StickerMenu_Click"
+                                >
+                            <Image Width="23"
+                                   Height="23"
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,2" Source="/Images/Sticker.png"/>
+                        </Button>
+                        <Button Style="{StaticResource InformButton}"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 Width="30"
                                 Height="25"
                                 Command="{Binding SendCommand}"
                                 Cursor="Hand"
+                                
                                 >
-                            <Image Source="/Images/Send.png"
+                            <Image 
                                Width="20"   
                                Height="20"
-                               RenderOptions.BitmapScalingMode="Fant"
+                               RenderOptions.BitmapScalingMode="Fant" 
+                               Source="/Images/Send.png"
                                />
                         </Button>
+
                     </StackPanel>
 
-                    
+
                 </Grid>
+
+                <Border Name="Stickers" 
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Background="#081117"
+                        Margin="0,40,10,0"
+                        CornerRadius="25, 0, 25,0"
+                        Visibility="Collapsed"
+                        >
+                    <Grid VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch">
+                        <ListView Background="Transparent"
+                                  ItemsSource="{Binding Stickers}"
+                                  SelectedItem="{Binding SelectedSticker}"
+                                  BorderThickness="0"
+                                  ItemContainerStyle="{StaticResource StickerItem}"
+                                  VerticalContentAlignment="Stretch"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  HorizontalContentAlignment="Stretch"
+                                  SelectionChanged="Sticker_SelectionChanged"
+                                  VirtualizingPanel.ScrollUnit="Pixel">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="5,0,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                    </Grid>
+                </Border>
+
+
                 <Grid.Style>
                     <Style TargetType="Grid">
                         <Setter Property="Visibility" Value="Collapsed"/>
                     </Style>
                 </Grid.Style>
             </Grid>
+
             <Image 
                 x:Name="temp_logo"
-                Source="/Images/logo4.png"
                 Grid.Row="2"
                 Grid.Column="1"
                 Visibility="Visible"
-                RenderOptions.BitmapScalingMode="Fant"/>
+                RenderOptions.BitmapScalingMode="Fant" 
+                Source="/Images/logo4.png"/>
 
         </Grid>
     </Border>

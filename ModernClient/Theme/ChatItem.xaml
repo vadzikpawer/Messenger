@@ -6,7 +6,8 @@
                 <ControlTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Border Width="30" Height="30" Name="Ava"
-                                CornerRadius="25">
+                                CornerRadius="25"
+                                VerticalAlignment="Stretch">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Background" Value="Green"/>
@@ -15,7 +16,7 @@
                         </Border>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding From}"
+                                <Label Content="{Binding FromName}"
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
                                        Margin="0, 0, -5, 0"
@@ -28,9 +29,48 @@
                                        VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <Label Content="{Binding Text}"
+                            <Label x:Name="Text" 
+                                   Content="{Binding Text}"
                                    VerticalAlignment="Center"
-                                   Foreground="White"></Label>
+                                   Foreground="White"
+                                   Margin="0,-5,0,0">
+
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            
+                            <Image x:Name="Sticker" 
+                                   Source="{Binding PathToSticker}"
+                                   Width="150"
+                                   Height="150"
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   Margin="8,0,0,0"
+                                   Stretch="Fill"
+                                   >
+
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                         </StackPanel>
                     </StackPanel>
                 </ControlTemplate>
@@ -49,8 +89,14 @@
         </Style.Resources>
 
         <Style.Triggers>
-            <DataTrigger Binding="{Binding FirstMessage}" Value="False">
-                <Setter Property="Template" Value="{StaticResource CustomRow}"/>
+            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                <Setter Property="Width" Value="300"/>
+                <Setter Property="Height" Value="150"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                <Setter Property="Width" Value="auto"/>
+                <Setter Property="Height" Value="auto"/>
             </DataTrigger>
         </Style.Triggers>
         

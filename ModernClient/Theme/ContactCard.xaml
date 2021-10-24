@@ -25,9 +25,24 @@
                             <StackPanel>
                                 <Label Content="{Binding Name}"
                                        Foreground="White"/>
-                                <Label Content="{Binding LastMessage}"
-                                       Foreground="Gray"
-                                       FontSize="10"/>
+                                <Label FontSize="10"
+                                       Margin="0, -10, 0,0"
+                                       FontWeight="Bold">
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Online}" Value="true">
+                                                    <Setter Property="Foreground" Value="Green"/>
+                                                    <Setter Property="Content" Value="Online"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Online}" Value="false">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="Content" Value="Offline"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
                             </StackPanel>
                         </StackPanel>
                     </Border>

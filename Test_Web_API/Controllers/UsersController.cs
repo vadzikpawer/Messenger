@@ -13,20 +13,22 @@ namespace Test_Web_API.Controllers
     public class UsersController : ControllerBase
     {
         Models.AppDbContext db;
+        User user = new User();
         public UsersController(Models.AppDbContext context)
         {
 
             db = context;
             if (!db.Users.Any())
             {
-                db.Users.Add(new User { Name = "test", Pass = "test"});
-                db.Users.Add(new User { Name = "test1", Pass = "test1"});
+                db.Users.Add(new User { Name = "test1", Online = false , Pass = "test1" });
+                db.Users.Add(new User { Name = "test2", Online = false, Pass = "test2" });
                 db.SaveChanges();
             }
             Console.WriteLine("User controller up");
 
         }
 
+        // GET api/users/all
         [HttpGet("all")]
 
         public async Task<ActionResult<IEnumerable<User>>> Get()
@@ -42,13 +44,23 @@ namespace Test_Web_API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Get(User user_in)
         {
-
-            User user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass)); 
-
-            if (user == null)
+            try
+            {
+                user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass));
+                Console.WriteLine($"Get_user!!!!!");
+                if (user == null)
+                {
+                    Console.WriteLine($"User Not found");
+                    return NotFound();
+                }
+            }
+            catch (InvalidOperationException ex)
             {
                 return NotFound();
             }
+            user.Online = true;
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
             return new ObjectResult(user);
         }
 
@@ -68,25 +80,25 @@ namespace Test_Web_API.Controllers
             }
             return new ObjectResult(user_out);
         }
-/*
-        [HttpGet("finduser/{name}")]
-        public async Task<ActionResult<User>> Get(string name)
-        {
-            User user = await db.Users.FirstAsync(x => x.Name == name);
+        /*
+                [HttpGet("finduser/{name}")]
+                public async Task<ActionResult<User>> Get(string name)
+                {
+                    User user = await db.Users.FirstAsync(x => x.Name == name);
 
-            User user_out = new Models.User();
-            user_out.Id = user.Id;
-            user_out.Age = user.Age;
-            user_out.Email = user.Email;
-            user_out.Name = user.Name;
-            user_out.Friends_IDs = user.Friends_IDs;
+                    User user_out = new Models.User();
+                    user_out.Id = user.Id;
+                    user_out.Age = user.Age;
+                    user_out.Email = user.Email;
+                    user_out.Name = user.Name;
+                    user_out.Friends_IDs = user.Friends_IDs;
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return new ObjectResult(user_out);
-        }*/
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+                    return new ObjectResult(user_out);
+                }*/
 
         // POST api/users
         [HttpPost("add")]
@@ -147,19 +159,19 @@ namespace Test_Web_API.Controllers
             return Ok(user);
         }
 
-       /* // DELETE api/users/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete(int id)
-        {
-            User user = db.Users.FirstOrDefault(x => x.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            db.Users.Remove(user);
-            await db.SaveChangesAsync();
-            return Ok(user);
-        }*/
+        /* // DELETE api/users/5
+         [HttpDelete("{id}")]
+         public async Task<ActionResult<User>> Delete(int id)
+         {
+             User user = db.Users.FirstOrDefault(x => x.Id == id);
+             if (user == null)
+             {
+                 return NotFound();
+             }
+             db.Users.Remove(user);
+             await db.SaveChangesAsync();
+             return Ok(user);
+         }*/
 
     }
 }

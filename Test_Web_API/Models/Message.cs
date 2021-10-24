@@ -14,17 +14,24 @@ namespace Test_Web_API.Models
         public int Id { get; set; }
         [Column("From")]
         [Required]
-        public string From { get; set; }
+        public int From { get; set; }
+        [Column("FromName")]
+        [Required]
+        public string FromName { get; set; }
 
         [Required]
         [Column("To")]
-        public string To { get; set; }
+        public int To { get; set; }
 
         [Column("Text")]
         public string Text { get; set; }
 
         [Column("dateStamp")]
         public DateTime dateStapm { get; set; }
+        [Column("IsSticker")]
+        public bool IsSticker { get; set; }
+        [Column("PathToSticker")]
+        public string PathToSticker { get; set; }
         // TODO: add datetime stamp
         public override string ToString()
         {

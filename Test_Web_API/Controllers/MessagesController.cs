@@ -24,10 +24,10 @@ namespace Test_Web_API.Controllers
             {
                 if (!db.Messages.Any())
                 {
-                    db.Messages.Add(new Message { From = "test1", To = "test2", Text = "test", dateStapm = DateTime.UtcNow });
-                    db.Messages.Add(new Message { From = "test2", To = "test1", Text = "test1", dateStapm = DateTime.UtcNow });
-                    db.Messages.Add(new Message { From = "test1", To = "test2", Text = "test2", dateStapm = DateTime.UtcNow });
-                    db.Messages.Add(new Message { From = "test2", To = "test1", Text = "test3", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = 1, FromName = "test1", To = 2, Text = "test", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = 2, FromName = "test2", To = 1, Text = "test1", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = 1, FromName = "test1", To = 2, Text = "test2", dateStapm = DateTime.UtcNow });
+                    db.Messages.Add(new Message { From = 2, FromName = "test2", To = 1, Text = "test3", dateStapm = DateTime.UtcNow });
                     db.SaveChanges();
                 }
 

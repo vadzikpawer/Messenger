@@ -7,6 +7,8 @@ namespace ModernClient.MVVM1.View
 
     public partial class MenuView : UserControl
     {
+        private bool MenuOpen = false;
+
         public MenuView()
         {
 
@@ -28,6 +30,27 @@ namespace ModernClient.MVVM1.View
             MainViewModel.timer.Stop();
             BoxMessage.Visibility = Visibility.Collapsed;
             temp_logo.Visibility = Visibility.Visible;
+        }
+
+        private void Sticker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Stickers.Visibility = Visibility.Collapsed;
+            MenuOpen = false;
+        }
+
+
+        private void StickerMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (!MenuOpen)
+            {
+                Stickers.Visibility = Visibility.Visible;
+                MenuOpen = true;
+            }
+            else
+            {
+                Stickers.Visibility = Visibility.Collapsed;
+                MenuOpen = false;
+            }
         }
     }
 }

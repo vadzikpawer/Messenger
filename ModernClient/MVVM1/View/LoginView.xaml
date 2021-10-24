@@ -6,8 +6,6 @@
              xmlns:local="clr-namespace:ModernClient.MVVM1.ViewModel" 
              xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
              mc:Ignorable="d" 
-             Height="695" Width="1280"
-             MinHeight="695" MinWidth="1280"
              Background="Transparent">
 
     <UserControl.Resources>
@@ -50,9 +48,6 @@
         </Style>
     </UserControl.Resources>
 
-    <UserControl.DataContext>
-        <viewModel:MainViewModel/>
-    </UserControl.DataContext>
 
     <Border>
         <Grid>
@@ -60,7 +55,7 @@
                 <RowDefinition Height="200"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-             <Image Source="/Images/logo.png"
+            <Image Source="/Images/logo.png"
                     RenderOptions.BitmapScalingMode="Fant"/>
 
 
@@ -84,7 +79,7 @@
                         CornerRadius="15"
                         HorizontalAlignment="Center">
 
-                    <TextBox Background="Transparent"
+                    <TextBox Name="LoginBox" Background="Transparent"
                                  BorderThickness="0"
                                  Width="130"
                                  Height="25"
@@ -93,7 +88,7 @@
                                  CaretBrush="White"
                                  Foreground="White"
                                  Margin="0,0,0,5"
-                                 Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding LoginGet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
 
                 <Label Content="Password"
@@ -110,7 +105,7 @@
                         CornerRadius="15"
                         Margin="0,0,0,25">
 
-                    <PasswordBox x:Name="Passbox" 
+                    <TextBox x:Name="PassBox" 
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Width="130"
@@ -120,6 +115,7 @@
                                  CaretBrush="White"
                                  Foreground="White"
                                  Margin="0,0,0,5"
+                                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              />
                 </Border>
 
@@ -128,8 +124,17 @@
                         Content="LOGIN"
                         Height="30"
                         Width="150" 
-                        Command="{Binding LoginCommand}" 
+                        Command="{Binding LoginCommand}"
+                        Margin="0,0,0,10"
                         />
+
+                <Label Content="{Binding Error}"
+                       Background="Transparent"
+                       Foreground="White"
+                       FontSize="20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       />
 
             </StackPanel>
         </Grid>

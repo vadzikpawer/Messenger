@@ -1,0 +1,3 @@
+websocket server/client <metanit>
+stickers ObservableCollection<NamesStickers> Text = ""/nameofsticker"
+new DataTrigers for stickers isSticker == true template for sticker

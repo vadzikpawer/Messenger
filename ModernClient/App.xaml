@@ -4,10 +4,11 @@
              xmlns:local="clr-namespace:ModernClient"
              xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
              xmlns:view="clr-namespace:ModernClient.MVVM1.View"
-             StartupUri="LoginWindow.xaml">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./Theme/StickerMenu.xaml"/>
                 <ResourceDictionary Source="./Theme/MenuButtonTheme.xaml"/>
                 <ResourceDictionary Source="./Theme/ContactCard.xaml"/>
                 <ResourceDictionary Source="./Theme/ChatItem.xaml"/>

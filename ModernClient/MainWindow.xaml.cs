@@ -1,6 +1,6 @@
-﻿using ModernClient.MVVM1.ViewModel;
+﻿using ModernClient.MVVM1.View;
+using ModernClient.MVVM1.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ModernClient
 {
@@ -8,11 +8,18 @@ namespace ModernClient
     public partial class MainWindow : Window
     {
 
+
         public MainWindow()
         {
 
             InitializeComponent();
+            MainViewModel mainModel = new MainViewModel();
+            LoginViewModel viewmodel = new LoginViewModel(mainModel);
+            LoginView login = new LoginView();
+            login.DataContext = viewmodel;
 
+            mainModel.CurrentView = login;
+            DataContext = mainModel;
         }
 
         private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -48,20 +55,6 @@ namespace ModernClient
             //CurrentUser.Name = Username.Name;
         }
 
-        private void Users_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            BoxMessage.Visibility = Visibility.Visible;
-            temp_logo.Visibility = Visibility.Collapsed;
-            Chat.SelectedIndex = Chat.Items.Count - 1;
-            Chat.ScrollIntoView(Chat.SelectedItem);
-        }
 
-        private void Home_button_Click(object sender, RoutedEventArgs e)
-        {
-            Users.UnselectAll();
-            MainViewModel.timer.Stop();
-            BoxMessage.Visibility = Visibility.Collapsed;
-            temp_logo.Visibility = Visibility.Visible;
-        }
     }
 }
