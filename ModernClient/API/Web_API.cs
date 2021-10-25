@@ -147,20 +147,89 @@ namespace ModernClient
             return user_in;
             //TODO: обработчик ошибок;
         }
-        public async Task<string> Add_User_async(User user)
+
+
+        public async Task<object> LogOut_User_async(UserOut user)
+        {
+
+            var json = JsonConvert.SerializeObject(user);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            string result;
+            var url = "http://localhost:5000/api/users/logout";
+            var client = new HttpClient();
+            try
+            {
+                var response = await client.PostAsync(url, data);
+                result = response.Content.ReadAsStringAsync().Result;
+                if ((int)response.StatusCode == 200)
+                {
+                    user_in = JsonConvert.DeserializeObject<UserOut>(result);
+                    Console.WriteLine(result.ToString());
+                }
+                else return (int)response.StatusCode;
+            }
+            catch (Exception ex)
+            {
+                if (ex is WebException)
+                {
+                    WebException ex1 = (WebException)ex;
+                    WebExceptionStatus status = ex1.Status;
+
+                    if (status == WebExceptionStatus.ProtocolError)
+                    {
+                        HttpWebResponse httpResponse = (HttpWebResponse)ex1.Response;
+                        Console.WriteLine("Статусный код ошибки: {0} - {1}",
+                                (int)httpResponse.StatusCode, httpResponse.StatusCode);
+                        return (int)httpResponse.StatusCode;
+                    }
+                }
+                else if (ex is HttpRequestException)
+                {
+                    return (string)"Сервер недоступен";
+                }
+            }
+            return user_in;
+            //TODO: обработчик ошибок;
+        }
+        public async Task<object> Add_User_async(UserOut user)
         {
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var url = "http://localhost:5000/api/users/adduser";
+            string result;
+            var url = "http://localhost:5000/api/users/add";
             var client = new HttpClient();
-            //Console.WriteLine("Response");
-            var response = await client.PostAsync(url, data);
+            try
+            {
+                var response = await client.PostAsync(url, data);
+                result = response.Content.ReadAsStringAsync().Result;
+                if ((int)response.StatusCode == 200)
+                {
+                    user_in = JsonConvert.DeserializeObject<UserOut>(result);
+                    Console.WriteLine(result.ToString());
+                }
+                else return (int)response.StatusCode;
+            }
+            catch (Exception ex)
+            {
+                if (ex is WebException)
+                {
+                    WebException ex1 = (WebException)ex;
+                    WebExceptionStatus status = ex1.Status;
 
-            string result = response.Content.ReadAsStringAsync().Result;
-            User user_in = JsonConvert.DeserializeObject<User>(result);
-            Console.WriteLine(result.ToString());
-            return "ok"; //TODO: обработчик ошибок;
+                    if (status == WebExceptionStatus.ProtocolError)
+                    {
+                        HttpWebResponse httpResponse = (HttpWebResponse)ex1.Response;
+                        Console.WriteLine("Статусный код ошибки: {0} - {1}",
+                                (int)httpResponse.StatusCode, httpResponse.StatusCode);
+                        return (int)httpResponse.StatusCode;
+                    }
+                }
+                else if (ex is HttpRequestException)
+                {
+                    return (string)"Сервер недоступен";
+                }
+            }
+            return user_in;
         }
     }
 }

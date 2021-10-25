@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="ModernClient.MVVM1.View.Buttons"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModernClient.MVVM1.View"
+             mc:Ignorable="d" 
+             >
+    <UserControl.Resources>
+        <Style x:Key="InformButton1" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="FontFamily" Value="Verdana"/>
+            <Setter Property="FontSize" Value="11px"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#4a70a5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+        				BorderThickness="0"
+        				Padding="4,2" 
+        				BorderBrush="red" 
+        				CornerRadius="15"
+                        Height="{TemplateBinding Height}"
+                        Width="{TemplateBinding Width}"
+        				Background="{TemplateBinding Background}">
+                            <Grid >
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center" 
+                                                  Name="content"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#00204b" />
+                                <Setter Property="Foreground" Value="#92ADD2" />
+                            </Trigger>
+
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <StackPanel Orientation="Vertical"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+        <Button Content="Регистрация"
+                Margin="0,0,0,10"
+                Style="{StaticResource InformButton1}"
+                Command="{Binding RegisterSwitch}"
+                Height="30"
+                Width="150">
+            
+        </Button>
+        <Button Content="Вход"
+                Style="{StaticResource InformButton1}"
+                Command="{Binding LoginSwitch}"
+                Height="30"
+                Width="150">
+
+        </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

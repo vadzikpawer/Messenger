@@ -63,6 +63,23 @@ namespace Test_Web_API.Controllers
             await db.SaveChangesAsync();
             return new ObjectResult(user);
         }
+        [HttpPost("logout")]
+        public async Task<ActionResult<User>> logout(User user_in)
+        {
+
+            user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass));
+            Console.WriteLine($"Get_user!!!!!");
+            if (user == null)
+            {
+                Console.WriteLine($"User Not found");
+                return NotFound();
+            }
+
+            user.Online = false;
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+            return new ObjectResult(user);
+        }
 
         [HttpGet("getuser/{id}")]
         public async Task<ActionResult<User>> Get(int id)
@@ -103,7 +120,10 @@ namespace Test_Web_API.Controllers
         // POST api/users
         [HttpPost("add")]
         public async Task<ActionResult<User>> Post([FromBody] User user)
-        {
+        { 
+            User user_in = await db.Users.FirstAsync(x => x.Name == user.Name);
+
+            if (user_in != null) return BadRequest("User exist");
 
             if (!ModelState.IsValid)
             {
@@ -111,6 +131,7 @@ namespace Test_Web_API.Controllers
             }
             else
             {
+                user.Online = true;
                 db.Users.Add(user);
                 await db.SaveChangesAsync();
                 return Ok(user);

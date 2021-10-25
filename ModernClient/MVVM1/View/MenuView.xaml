@@ -101,17 +101,6 @@
                        Width="auto"
                        Height="35"/>
                 </Border>
-                <Button x:Name="AcceptNik" 
-                        Style="{StaticResource InformButton}" 
-                        Content="✓" 
-                        Background="Transparent"
-                        Width="30"
-                        Height="30"
-                        FontWeight="Bold"
-                        FontSize="20"
-                        Cursor="Hand">
-
-                </Button>
                 <Button x:Name="Home_button" 
                         Style="{StaticResource InformButton}"
                         Background="Transparent"
@@ -125,6 +114,18 @@
                         FontSize="22"
                         Margin="0,0,0,0"
                         >
+
+                </Button>
+                <Button x:Name="AcceptNik" 
+                        Style="{StaticResource InformButton}" 
+                        Content="⭙" 
+                        Background="Transparent"
+                        Width="30"
+                        Height="30"
+                        FontWeight="Bold"
+                        FontSize="20"
+                        Cursor="Hand"
+                        Command="{Binding LogOut}">
 
                 </Button>
             </StackPanel>

@@ -108,6 +108,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MVVM1\View\Buttons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MVVM1\View\LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -115,6 +119,10 @@
     <Page Include="MVVM1\View\MenuView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MVVM1\View\RegisterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Theme\ChatItem.xaml">
       <SubType>Designer</SubType>
@@ -146,14 +154,22 @@
     <Compile Include="MVVM1\Model\Sticker.cs" />
     <Compile Include="MVVM1\Model\UserOut.cs" />
     <Compile Include="MVVM1\Model\User.cs" />
+    <Compile Include="MVVM1\ViewModel\ButtonsViewModel.cs" />
     <Compile Include="MVVM1\ViewModel\LoginViewModel.cs" />
     <Compile Include="MVVM1\ViewModel\MenuViewModel.cs" />
     <Compile Include="MVVM1\ViewModel\MainViewModel.cs" />
+    <Compile Include="MVVM1\ViewModel\RegisterViewModel.cs" />
+    <Compile Include="MVVM1\View\Buttons.xaml.cs">
+      <DependentUpon>Buttons.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM1\View\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MVVM1\View\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MVVM1\View\RegisterView.xaml.cs">
+      <DependentUpon>RegisterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

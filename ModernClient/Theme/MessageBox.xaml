@@ -19,8 +19,8 @@
                                      Background="Transparent"
                                      TextWrapping="Wrap"
                                      BorderThickness="0"
-                                     Foreground="Gray"
-                                     CaretBrush="Gray"
+                                     Foreground="White"
+                                     CaretBrush="White"
                                      Margin="8,0,0,0"
                                      Text="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>

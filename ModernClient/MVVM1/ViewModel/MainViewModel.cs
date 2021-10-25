@@ -1,11 +1,13 @@
 ﻿using ModernClient.Core;
 using ModernClient.MVVM1.Model;
+using ModernClient.MVVM1.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using RelayCommand = ModernClient.Core.RelayCommand;
 
@@ -19,7 +21,7 @@ namespace ModernClient.MVVM1.ViewModel
 
         private User _SelectedUser;
         private UserOut _currentUser;
-
+        public ICommand LogOut { get; private set; }
         public UserOut CurrentUser
         {
             get { return _currentUser; }
@@ -31,7 +33,8 @@ namespace ModernClient.MVVM1.ViewModel
         }
 
         public MenuViewModel MenuVM { get; set; }
-        public LoginViewModel LoginVM { get; set; }
+        public LoginView LoginVM { get; set; }
+        public Buttons ButtonsView { get; set; }
 
         private UserControl _currentView { get; set; }
         public UserControl CurrentView
@@ -47,7 +50,6 @@ namespace ModernClient.MVVM1.ViewModel
         internal void SetNewContent(UserControl _content)
         {
             CurrentView = _content;
-            timer_users.Start();
         }
 
         public static DispatcherTimer timer = new DispatcherTimer()
@@ -94,6 +96,14 @@ namespace ModernClient.MVVM1.ViewModel
                         {
                             Messages.Add(Temp_messages[i]);
                         }
+                        for (int i = 0; i < Messages.Count; i++)
+                        {
+                            if (Messages[i].IsSticker)
+                            {
+                                Messages[i].PathToSticker = Directory.GetCurrentDirectory() + "//Images//Stickers//" + Messages[i].PathToSticker;
+                            }
+                            Messages[i].dateStapm = Messages[i].dateStapm.ToLocalTime();
+                        }
 
                     }
                     SelectedUser.Messages = Messages;
@@ -119,7 +129,7 @@ namespace ModernClient.MVVM1.ViewModel
 
                     for (int i = 0; i < Temp_users.Count; i++)
                     {
-                        if ((Temp_users[i].Id == Users[i].Id) && (Temp_users[i].Name != Users[i].Name) && (Temp_users[i].Online != Users[i].Online))
+                        if ((Temp_users[i].Id == Users[i].Id) && ((Temp_users[i].Name != Users[i].Name) || (Temp_users[i].Online != Users[i].Online)))
                         {
                             equal = false;
                         }
@@ -146,6 +156,7 @@ namespace ModernClient.MVVM1.ViewModel
         }
         public RelayCommand SendCommand { get; set; }
         public RelayCommand Home { get; set; }
+        
 
         private string _message;
 
@@ -241,13 +252,31 @@ namespace ModernClient.MVVM1.ViewModel
 
             return filesFound;
         }
+
+        private async void LogOutCommand(object _param)
+        {
+            ButtonsViewModel ButtonsVM = new ButtonsViewModel(this);
+            ButtonsView = new Buttons();
+            ButtonsView.DataContext = ButtonsVM;
+            Users.Clear();
+            Messages.Clear();
+            await API.LogOut_User_async(CurrentUser);
+            timer_users.Stop();
+            SetNewContent(ButtonsView);
+        }
+
+
+        private bool CanLogOut(object _param)
+        {
+            return true;
+        }
         public MainViewModel()
         {
             Messages = new ObservableCollection<Message>();
             Users = new ObservableCollection<User>();
             CurrentUser = new UserOut();
             Stickers = new ObservableCollection<Sticker>();
-
+            LogOut = new RelayCommand(LogOutCommand, CanLogOut);
             string searchFolder = Directory.GetCurrentDirectory() + "//Images//Stickers//";
             var filters = new string[] { "jpg", "jpeg", "png", "gif", "tiff", "bmp", "svg" };
             var filesFound = GetFilesFrom(searchFolder, filters, false);
@@ -292,6 +321,8 @@ namespace ModernClient.MVVM1.ViewModel
             {
                 Messages.Clear();
             });
+
+            
 
             Messages.Add(new Message
             {

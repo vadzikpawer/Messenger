@@ -8,17 +8,18 @@ namespace ModernClient
     public partial class MainWindow : Window
     {
 
-
+        Web_API API = new Web_API();
+        MainViewModel mainModel = new MainViewModel();
         public MainWindow()
         {
 
             InitializeComponent();
-            MainViewModel mainModel = new MainViewModel();
-            LoginViewModel viewmodel = new LoginViewModel(mainModel);
-            LoginView login = new LoginView();
-            login.DataContext = viewmodel;
+            
+            ButtonsViewModel viewmodel = new ButtonsViewModel(mainModel);
+            Buttons buttons = new Buttons();
+            buttons.DataContext = viewmodel;
 
-            mainModel.CurrentView = login;
+            mainModel.CurrentView = buttons;
             DataContext = mainModel;
         }
 
@@ -45,8 +46,10 @@ namespace ModernClient
             else Application.Current.MainWindow.WindowState = WindowState.Normal;
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private async void Close_Click(object sender, RoutedEventArgs e)
         {
+            await API.LogOut_User_async(mainModel.CurrentUser);
+            MainViewModel.timer_users.Stop();
             Application.Current.Shutdown();
         }
 

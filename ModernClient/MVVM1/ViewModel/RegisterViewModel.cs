@@ -1,31 +1,34 @@
 ﻿using ModernClient.Core;
 using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using ObservableObject = ModernClient.Core.ObservableObject;
 
 namespace ModernClient.MVVM1.ViewModel
 {
-    class LoginViewModel : ObservableObject
+    class RegisterViewModel: ObservableObject
     {
         MainViewModel _mainModel;
         Web_API API = new Web_API();
         MenuView menu = new MenuView();
-        public ICommand LoginCommand { get; private set; }
-
-        public LoginViewModel(MainViewModel mainModel)
+        public ICommand RegisterCommand { get; private set; }
+        public RegisterViewModel(MainViewModel mainModel)
         {
             _mainModel = mainModel;
-            LoginCommand = new RelayCommand(Login, CanLogin);
+            RegisterCommand = new RelayCommand(Register, CanRegister);
         }
 
-        private void Login(object _param)
+        private void Register(object _param)
         {
             menu.DataContext = _mainModel;
             Login_command();
         }
 
-        private bool CanLogin(object _param)
+        private bool CanRegister(object _param)
         {
             return true;
         }
@@ -59,7 +62,7 @@ namespace ModernClient.MVVM1.ViewModel
             Error = "";
             if ((LoginGet != null && Password != null) || (LoginGet != "" && Password != ""))
             {
-                var response = await API.Get_User_async(new UserOut
+                var response = await API.Add_User_async(new UserOut
                 {
                     Name = LoginGet,
                     Pass = Password
@@ -74,11 +77,11 @@ namespace ModernClient.MVVM1.ViewModel
                 }
                 else if (response.GetType() == typeof(int))
                 {
-                    if ((int)response == 404)
+                    if ((int)response == 400)
                     {
                         LoginGet = "";
                         Password = "";
-                        Error = "Пользователь с таким именем и паролем не найден";
+                        Error = "Пользователь с таким именем уже существует";
                     }
                 }
                 else if (response.GetType() == typeof(string))
@@ -107,7 +110,5 @@ namespace ModernClient.MVVM1.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
     }
 }
