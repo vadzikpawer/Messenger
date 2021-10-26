@@ -23,10 +23,12 @@ namespace Test_Web_API.Models
         [Column("IsOnline")]
         public bool Online { get; set; }
 
-
         [Column("Pass")]
         public string Pass { get; set; }
 
-
+        [Column("Color")]
+        public string Color { get; set; }
+        [Column("ConnectionID")]
+        public string ConnectionID { get; set; }
     }
 }

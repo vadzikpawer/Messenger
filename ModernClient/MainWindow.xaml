@@ -13,6 +13,7 @@
         Background="Transparent"
         AllowsTransparency="True"
         x:Name="Boysband_messanger"
+        WindowStartupLocation="CenterScreen"
         >
 
     <Window.Resources>

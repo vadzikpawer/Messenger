@@ -10,7 +10,7 @@
                                 VerticalAlignment="Stretch">
                             <Border.Style>
                                 <Style TargetType="Border">
-                                    <Setter Property="Background" Value="Green"/>
+                                    <Setter Property="Background" Value="{Binding Color}"/>
                                 </Style>
                             </Border.Style>
                         </Border>
@@ -20,7 +20,7 @@
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
                                        Margin="0, 0, -5, 0"
-                                       Foreground="{Binding Background, ElementName=Ava}"/>
+                                       Foreground="{Binding Color}"/>
 
                                 <Label Content="{Binding dateStapm}"
                                        Foreground="Gray"

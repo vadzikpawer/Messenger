@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,10 @@ namespace Test_Web_API.Controllers
     {
         AppDbContext db;
         bool debug;
-        public MessagesController(AppDbContext context)
+        private readonly IHubContext<ChatHub> _hubContext;
+        public MessagesController(AppDbContext context, IHubContext<ChatHub> hubContext)
         {
+            _hubContext = hubContext;
             Console.WriteLine("message controller up");
             debug = true;
             db = context;
@@ -38,12 +41,15 @@ namespace Test_Web_API.Controllers
         [HttpPost("get")]
         public async Task<ActionResult<Message>> Get(Message message_in)
         {
+
             if (debug)
             {
                 Console.WriteLine(message_in);
             }
 
-            List<Message> messages = await db.Messages.Where(x => (x.From == message_in.From && x.To == message_in.To) || (x.To == message_in.From && x.From == message_in.To)).ToListAsync();
+            List<Message> messages = await db.Messages.Where(x => (x.From == message_in.From && x.To == message_in.To)
+                                                            || (x.To == message_in.From && x.From == message_in.To))
+                                                            .ToListAsync();
 
             if (messages == null)
             {
@@ -67,6 +73,7 @@ namespace Test_Web_API.Controllers
             message.dateStapm = DateTime.UtcNow;
             db.Messages.Add(message);
             await db.SaveChangesAsync();
+
             return Ok(message);
         }
 

@@ -11,12 +11,12 @@ namespace Test_Web_API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            /*string ip_db = "168.63.110.193";
-            string con = $"Server={ip_db},1433;Database=TestDB;User = SA; Password = <YourStrong@Passw0rd>;";*/
-            string con = "Server=(localdb)\\mssqllocaldb;Database=mobilesdb;Trusted_Connection=True;";
+            string ip_db = "168.63.110.193";
+            string con = $"Server={ip_db},1433;Database=TestDB;User = SA; Password = <YourStrong@Passw0rd>;";
+            /*string con = "Server=(localdb)\\mssqllocaldb;Database=mobilesdb;Trusted_Connection=True;";*/
             // устанавливаем контекст данных
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(con));
-
+            services.AddSignalR();
             services.AddControllers(); // используем контроллеры без представлений
 
         }
@@ -26,12 +26,15 @@ namespace Test_Web_API
         {
 
             db.Database.EnsureCreated();
+            app.UseWebSockets();
+
             app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("/chat");
                 endpoints.MapControllers(); // подключаем маршрутизацию на контроллеры
             });
         }

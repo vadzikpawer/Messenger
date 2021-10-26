@@ -1,4 +1,5 @@
-﻿using ModernClient.MVVM1.View;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using ModernClient.MVVM1.View;
 using ModernClient.MVVM1.ViewModel;
 using System.Windows;
 
@@ -14,7 +15,7 @@ namespace ModernClient
         {
 
             InitializeComponent();
-            
+
             ButtonsViewModel viewmodel = new ButtonsViewModel(mainModel);
             Buttons buttons = new Buttons();
             buttons.DataContext = viewmodel;
@@ -48,8 +49,11 @@ namespace ModernClient
 
         private async void Close_Click(object sender, RoutedEventArgs e)
         {
-            await API.LogOut_User_async(mainModel.CurrentUser);
-            MainViewModel.timer_users.Stop();
+            if (mainModel.CurrentUser != null)
+            {
+                await MainViewModel.connection.InvokeAsync("LogOut", mainModel.CurrentUser);
+            }
+            await MainViewModel.connection.StopAsync();
             Application.Current.Shutdown();
         }
 

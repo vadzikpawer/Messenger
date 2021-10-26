@@ -31,11 +31,11 @@
                                     <Label.Style>
                                         <Style TargetType="Label">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Online}" Value="true">
+                                                <DataTrigger Binding="{Binding Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
                                                     <Setter Property="Foreground" Value="Green"/>
                                                     <Setter Property="Content" Value="Online"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Online}" Value="false">
+                                                <DataTrigger Binding="{Binding Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
                                                     <Setter Property="Foreground" Value="Red"/>
                                                     <Setter Property="Content" Value="Offline"/>
                                                 </DataTrigger>

@@ -9,11 +9,13 @@ namespace ModernClient.MVVM1.Model
         public int Id { get; set; }
 
         public int From { get; set; }
+
         public string FromName { get; set; }
 
         public int To { get; set; }
 
         public string Text { get; set; }
+        public string Color { get; set; }
 
         public DateTime dateStapm { get; set; }
 

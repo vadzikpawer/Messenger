@@ -126,7 +126,7 @@
                         Margin="0,0,0,10"
                         />
 
-                <Label Content="{Binding Error}"
+                <Label Content="{Binding Error, UpdateSourceTrigger=PropertyChanged}"
                        Background="Transparent"
                        Foreground="White"
                        FontSize="20"

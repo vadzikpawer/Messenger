@@ -7,12 +7,12 @@
 
         public string NameForSent
         {
-            get 
-            { 
-                return _nameSent; 
+            get
+            {
+                return _nameSent;
             }
-            set 
-            { 
+            set
+            {
                 _nameSent = value;
             }
         }

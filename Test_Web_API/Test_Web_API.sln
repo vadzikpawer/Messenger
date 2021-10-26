@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_Web_API", "Test_Web_API.csproj", "{FCB216C7-D4C4-4D7A-893F-CDFB3B7AB22E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "..\ConsoleApp\ConsoleApp.csproj", "{6D1652A8-C308-4C51-A8CF-335F4C88D5D9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernClient", "..\ModernClient\ModernClient.csproj", "{52282D7D-D428-4204-BD29-D2E652E2894B}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{FCB216C7-D4C4-4D7A-893F-CDFB3B7AB22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCB216C7-D4C4-4D7A-893F-CDFB3B7AB22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCB216C7-D4C4-4D7A-893F-CDFB3B7AB22E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D1652A8-C308-4C51-A8CF-335F4C88D5D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D1652A8-C308-4C51-A8CF-335F4C88D5D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D1652A8-C308-4C51-A8CF-335F4C88D5D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D1652A8-C308-4C51-A8CF-335F4C88D5D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Release|Any CPU.ActiveCfg = Release|Any CPU

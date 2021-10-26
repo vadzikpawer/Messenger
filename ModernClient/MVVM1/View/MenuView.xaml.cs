@@ -1,6 +1,7 @@
 ﻿using ModernClient.MVVM1.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace ModernClient.MVVM1.View
 {
@@ -8,12 +9,13 @@ namespace ModernClient.MVVM1.View
     public partial class MenuView : UserControl
     {
         private bool MenuOpen = false;
-
+        public static CollectionView view;
+        public static ListView _userlist;
         public MenuView()
         {
 
             InitializeComponent();
-
+            _userlist = UsersList;
         }
 
         private void Users_SelectionChanged(object sender, SelectionChangedEventArgs e)

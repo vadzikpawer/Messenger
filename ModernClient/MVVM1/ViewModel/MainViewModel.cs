@@ -1,10 +1,12 @@
-﻿using ModernClient.Core;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using ModernClient.Core;
 using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,6 +17,7 @@ namespace ModernClient.MVVM1.ViewModel
 {
     class MainViewModel : ObservableObject
     {
+        public static HubConnection connection = new HubConnectionBuilder().WithUrl("http://168.63.110.193:80/chat").Build();
         public ObservableCollection<Message> Messages { get; set; }
         public ObservableCollection<User> Users { get; set; }
         public ObservableCollection<Sticker> Stickers { get; set; }
@@ -76,8 +79,8 @@ namespace ModernClient.MVVM1.ViewModel
             {
 
                 _SelectedUser = value;
-                Get_msg();
-                timer.Start();
+                Get_msgWs();
+                /*timer.Start();*/
                 OnPropertyChanged("SelectedUser");
             }
         }
@@ -109,7 +112,7 @@ namespace ModernClient.MVVM1.ViewModel
                     SelectedUser.Messages = Messages;
                     OnPropertyChanged("SelectedUser");
                 }
-                
+
             });
 
             Get_msg.Invoke();
@@ -155,8 +158,8 @@ namespace ModernClient.MVVM1.ViewModel
 
         }
         public RelayCommand SendCommand { get; set; }
+        public RelayCommand SendCommandWs { get; set; }
         public RelayCommand Home { get; set; }
-        
 
         private string _message;
 
@@ -192,34 +195,64 @@ namespace ModernClient.MVVM1.ViewModel
             set
             {
                 _selectedSticker = value;
-                SendSticker();
+                SendStickerWs();
                 OnPropertyChanged("SelectedSticker");
+
             }
         }
 
-        private async Task SendSticker()
+        //private async Task SendSticker()
+        //{
+        //    await API.Send_message_async(new Message
+        //    {
+        //        From = CurrentUser.Id,
+        //        FromName = CurrentUser.Name,
+        //        To = SelectedUser.Id,
+        //        Text = "",
+        //        Color = CurrentUser.Color,
+        //        dateStapm = System.DateTime.Now,
+        //        IsSticker = true,
+        //        PathToSticker = SelectedSticker.NameForSent
+        //    }) ;
+
+        //    Messages.Add(new Message
+        //    {
+        //        From = CurrentUser.Id,
+        //        To = SelectedUser.Id,
+        //        FromName = CurrentUser.Name,
+        //        Text = "",
+        //        dateStapm = System.DateTime.Now,
+        //        IsSticker = true,
+        //        PathToSticker = SelectedSticker.Name
+        //    });
+        //}
+
+        private async void SendStickerWs()
         {
-            await API.Send_message_async(new Message
+            await connection.InvokeAsync("Send", new Message
             {
                 From = CurrentUser.Id,
-                FromName = CurrentUser.Name,
                 To = SelectedUser.Id,
+                FromName = CurrentUser.Name,
                 Text = "",
+                Color = CurrentUser.Color,
                 dateStapm = System.DateTime.Now,
                 IsSticker = true,
                 PathToSticker = SelectedSticker.NameForSent
-            }) ;
+            });
 
             Messages.Add(new Message
             {
                 From = CurrentUser.Id,
                 To = SelectedUser.Id,
                 FromName = CurrentUser.Name,
-                Text = Message,
+                Text = "",
+                Color = CurrentUser.Color,
                 dateStapm = System.DateTime.Now,
                 IsSticker = true,
                 PathToSticker = SelectedSticker.Name
             });
+            OnPropertyChanged("Messages");
         }
 
         private async void Get_msg()
@@ -236,9 +269,18 @@ namespace ModernClient.MVVM1.ViewModel
                     }
                     Messages[i].dateStapm = Messages[i].dateStapm.ToLocalTime();
                 }
-                _SelectedUser.Messages = Messages;
+                SelectedUser.Messages = Messages;
             }
             OnPropertyChanged("SelectedUser");
+            OnPropertyChanged("Messages");
+        }
+
+        private async void Get_msgWs()
+        {
+            if (_SelectedUser != null)
+            {
+                await connection.InvokeAsync("GetMessages", new Message { From = CurrentUser.Id, FromName = CurrentUser.Name, To = _SelectedUser.Id });
+            }
         }
 
         public static List<string> GetFilesFrom(string searchFolder, string[] filters, bool isRecursive)
@@ -260,23 +302,150 @@ namespace ModernClient.MVVM1.ViewModel
             ButtonsView.DataContext = ButtonsVM;
             Users.Clear();
             Messages.Clear();
-            await API.LogOut_User_async(CurrentUser);
-            timer_users.Stop();
+            await connection.InvokeAsync("LogOut", CurrentUser);
+            CurrentUser = null;
             SetNewContent(ButtonsView);
         }
-
 
         private bool CanLogOut(object _param)
         {
             return true;
         }
+
+        private async Task SortUsers()
+        {
+            for (int i = 0; i < Users.Count - 1; i++)
+            {
+                User Max_user = Users[i];
+                int Max = i;
+                for (int j = i + 1; j < Users.Count; j++)
+                {
+                    if (Users[i].LastMessage < Users[j].LastMessage)
+                    {
+                        Max = j;
+                    }
+                }
+
+                if (Max != i)
+                {
+                    Max_user = Users[i];
+                    Users[i] = Users[Max];
+                    Users[Max] = Max_user;
+
+                }
+            }
+
+            await Task.Delay(3000);
+        }
         public MainViewModel()
         {
+            connection.StartAsync();
             Messages = new ObservableCollection<Message>();
             Users = new ObservableCollection<User>();
             CurrentUser = new UserOut();
             Stickers = new ObservableCollection<Sticker>();
             LogOut = new RelayCommand(LogOutCommand, CanLogOut);
+
+            connection.On<ObservableCollection<User>>("UpdateUser", temp =>
+            {
+                bool equal = true;
+                if (temp.Count == Users.Count)
+                {
+                    foreach (var item in temp)
+                    {
+                        User tempuser1 = item;
+                        User tempuser2 = Users.FirstOrDefault(x => x.Id == tempuser1.Id);
+                        tempuser2.Online = tempuser1.Online;
+                    }
+
+                }
+                else
+                {
+                    equal = false;
+                };
+                if (!equal)
+                {
+                    Users.Clear();
+                    for (int i = 0; i < temp.Count; i++)
+                    {
+                        Users.Add(temp[i]);
+                    }
+                    OnPropertyChanged("Users");
+                }
+                /*
+
+                                for (int i = 0; i < Users.Count; i++)
+                                {
+                                    connection.InvokeAsync("GetLastMessage", new Message
+                                    {
+                                        From = CurrentUser.Id,
+                                        FromName = CurrentUser.Name,
+                                        To = Users[i].Id
+                                    });
+                                }*/
+
+            });
+
+
+            connection.On<Message>("NewMessage", message =>
+            {
+                if (message.From == SelectedUser.Id && message.From != CurrentUser.Id)
+                {
+                    User temp_user = Users.First(x => x.Id == message.To);
+
+                    /*connection.InvokeAsync("GetLastMessage", new Message
+                    {
+                        From = CurrentUser.Id,
+                        FromName = CurrentUser.Name,
+                        To = temp_user.Id
+                    });*/
+                    if (message.IsSticker)
+                    {
+                        message.PathToSticker = Directory.GetCurrentDirectory() + "//Images//Stickers//" + message.PathToSticker;
+                    }
+                    message.dateStapm = message.dateStapm.ToLocalTime();
+                    Messages.Add(message);
+                    OnPropertyChanged("Messages");
+                }
+            });
+
+            connection.On<ObservableCollection<Message>>("ReceiveMessages", temp =>
+            {
+                Messages.Clear();
+                for (int i = 0; i < temp.Count; i++)
+                {
+                    Messages.Add(temp[i]);
+                    if (Messages[i].IsSticker)
+                    {
+                        Messages[i].PathToSticker = Directory.GetCurrentDirectory() + "//Images//Stickers//" + Messages[i].PathToSticker;
+                    }
+                    Messages[i].dateStapm = Messages[i].dateStapm.ToLocalTime();
+                }
+                SelectedUser.Messages = Messages;
+                OnPropertyChanged("SelectedUser");
+                OnPropertyChanged("Messages");
+            }
+            );
+
+            /*connection.On<DateTime, int>("RecieveLastMessage", async (_temp, id) =>
+            {
+                for (int i = 0; i < Users.Count; i++)
+                {
+                    if (Users[i].Id == id)
+                    {
+                        Users[i].LastMessage = _temp;
+                    }
+                }
+
+                await SortUsers();
+                OnPropertyChanged("Users");
+            });*/
+
+            connection.On<string>("NoMessage", _temp =>
+           {
+               OnPropertyChanged("Users");
+           });
+
             string searchFolder = Directory.GetCurrentDirectory() + "//Images//Stickers//";
             var filters = new string[] { "jpg", "jpeg", "png", "gif", "tiff", "bmp", "svg" };
             var filesFound = GetFilesFrom(searchFolder, filters, false);
@@ -286,8 +455,43 @@ namespace ModernClient.MVVM1.ViewModel
                 Stickers.Add(new Sticker { Name = filesFound[i], NameForSent = filesFound[i].Substring(searchFolder.Length) });
             }
 
+
+
             timer.Tick += Timer_tick;
             timer_users.Tick += Timer_tick_users;
+
+            SendCommandWs = new RelayCommand(async o =>
+            {
+                if (Message != null && SelectedUser != null)
+                {
+                    await connection.InvokeAsync("Send", new Message
+                    {
+                        From = CurrentUser.Id,
+                        To = SelectedUser.Id,
+                        FromName = CurrentUser.Name,
+                        Text = Message,
+                        Color = CurrentUser.Color,
+                        dateStapm = System.DateTime.Now,
+                        IsSticker = false
+                    });
+
+                    Messages.Add(new Message
+                    {
+                        From = CurrentUser.Id,
+                        To = SelectedUser.Id,
+                        FromName = CurrentUser.Name,
+                        Text = Message,
+                        Color = CurrentUser.Color,
+                        dateStapm = System.DateTime.Now,
+                        IsSticker = false
+                    });
+                    /*SelectedUser.LastMessage = Messages.Last().dateStapm;*/
+                    Message = "";
+                    /*await SortUsers();*/
+                    OnPropertyChanged("Messages");
+                    /*SelectedUser = Users.First();*/
+                }
+            });
 
             SendCommand = new RelayCommand(async o =>
             {
@@ -299,7 +503,8 @@ namespace ModernClient.MVVM1.ViewModel
                         FromName = CurrentUser.Name,
                         To = SelectedUser.Id,
                         Text = Message,
-                        dateStapm = System.DateTime.Now, 
+                        Color = CurrentUser.Color,
+                        dateStapm = System.DateTime.Now,
                         IsSticker = false
                     });
 
@@ -309,6 +514,7 @@ namespace ModernClient.MVVM1.ViewModel
                         To = SelectedUser.Id,
                         FromName = CurrentUser.Name,
                         Text = Message,
+                        Color = CurrentUser.Color,
                         dateStapm = System.DateTime.Now,
                         IsSticker = false
                     });
@@ -322,16 +528,6 @@ namespace ModernClient.MVVM1.ViewModel
                 Messages.Clear();
             });
 
-            
-
-            Messages.Add(new Message
-            {
-                From = 1,
-                To = 2,
-                Text = "Test",
-                dateStapm = DateTime.UtcNow,
-                IsSticker = false
-            });
         }
     }
 }

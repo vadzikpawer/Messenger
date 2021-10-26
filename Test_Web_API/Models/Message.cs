@@ -26,6 +26,9 @@ namespace Test_Web_API.Models
         [Column("Text")]
         public string Text { get; set; }
 
+        [Column("Color")]
+        public string Color { get; set; }
+
         [Column("dateStamp")]
         public DateTime dateStapm { get; set; }
         [Column("IsSticker")]

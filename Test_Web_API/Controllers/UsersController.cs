@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,17 @@ namespace Test_Web_API.Controllers
     {
         Models.AppDbContext db;
         User user = new User();
-        public UsersController(Models.AppDbContext context)
-        {
+        Random rnd = new Random();
+        private readonly IHubContext<ChatHub> _hubContext;
 
+        public UsersController(Models.AppDbContext context, IHubContext<ChatHub> hubContext)
+        {
+            _hubContext = hubContext;
             db = context;
             if (!db.Users.Any())
             {
-                db.Users.Add(new User { Name = "test1", Online = false , Pass = "test1" });
-                db.Users.Add(new User { Name = "test2", Online = false, Pass = "test2" });
+                db.Users.Add(new User { Name = "test1", Online = false, Pass = "test1", Color = Colors[rnd.Next(Colors.Count())] });
+                db.Users.Add(new User { Name = "test2", Online = false, Pass = "test2", Color = Colors[rnd.Next(Colors.Count())] });
                 db.SaveChanges();
             }
             Console.WriteLine("User controller up");
@@ -42,12 +46,12 @@ namespace Test_Web_API.Controllers
 
         // GET api/users/
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Get(User user_in)
+        public async Task<ActionResult<User>> Login(User user_in)
         {
             try
             {
-                user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass));
-                Console.WriteLine($"Get_user!!!!!");
+                user = await db.Users.FirstAsync(x => x.Name == user_in.Name && x.Pass == user_in.Pass);
+                Console.WriteLine($"LogIIN!!!!!");
                 if (user == null)
                 {
                     Console.WriteLine($"User Not found");
@@ -60,25 +64,33 @@ namespace Test_Web_API.Controllers
             }
             user.Online = true;
             db.Users.Update(user);
-            await db.SaveChangesAsync();
+            db.SaveChanges();
+
+            List<User> Users = await db.Users.ToListAsync();
+            for (int i = 0; i < Users.Count; i++) Users[i].Pass = null;
+            await _hubContext.Clients.All.SendAsync("UpdateUser", Users);
+
+            user.Pass = null;
+
             return new ObjectResult(user);
         }
+
         [HttpPost("logout")]
         public async Task<ActionResult<User>> logout(User user_in)
         {
 
-            user = await db.Users.FirstAsync(x => (x.Name == user_in.Name && x.Pass == user_in.Pass));
-            Console.WriteLine($"Get_user!!!!!");
-            if (user == null)
-            {
-                Console.WriteLine($"User Not found");
-                return NotFound();
-            }
+            user = await db.Users.FirstAsync(x => (x.Id == user_in.Id));
+            Console.WriteLine($"LogOUUT!!!!!");
 
             user.Online = false;
             db.Users.Update(user);
-            await db.SaveChangesAsync();
-            return new ObjectResult(user);
+            db.SaveChanges();
+
+            List<User> Users = await db.Users.ToListAsync();
+            for (int i = 0; i < Users.Count; i++) Users[i].Pass = null;
+            await _hubContext.Clients.All.SendAsync("UpdateUser", Users);
+
+            return new OkResult();
         }
 
         [HttpGet("getuser/{id}")]
@@ -120,7 +132,7 @@ namespace Test_Web_API.Controllers
         // POST api/users
         [HttpPost("add")]
         public async Task<ActionResult<User>> Post([FromBody] User user)
-        { 
+        {
             User user_in = await db.Users.FirstAsync(x => x.Name == user.Name);
 
             if (user_in != null) return BadRequest("User exist");
@@ -132,8 +144,14 @@ namespace Test_Web_API.Controllers
             else
             {
                 user.Online = true;
+                user.Color = Colors[rnd.Next(Colors.Count())];
                 db.Users.Add(user);
                 await db.SaveChangesAsync();
+
+                List<User> Users = await db.Users.ToListAsync();
+                for (int i = 0; i < Users.Count; i++) Users[i].Pass = null;
+                await _hubContext.Clients.All.SendAsync("UpdateUser", Users);
+
                 return Ok(user);
             }
         }
@@ -193,6 +211,10 @@ namespace Test_Web_API.Controllers
              await db.SaveChangesAsync();
              return Ok(user);
          }*/
+
+        public static List<string> Colors = new List<string> { "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DodgerBlue", "Firebrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "Goldenrod", "Gray", "Green", "GreenYellow", "Honeydew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenrodYellow", "LightGray", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquamarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen" };
+
+
 
     }
 }

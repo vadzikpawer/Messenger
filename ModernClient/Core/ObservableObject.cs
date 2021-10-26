@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace ModernClient.Core
 {
-    class ObservableObject : INotifyPropertyChanged
+    public class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

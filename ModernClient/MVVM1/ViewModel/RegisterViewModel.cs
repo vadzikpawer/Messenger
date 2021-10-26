@@ -1,16 +1,12 @@
-﻿using ModernClient.Core;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using ModernClient.Core;
 using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ModernClient.MVVM1.ViewModel
 {
-    class RegisterViewModel: ObservableObject
+    class RegisterViewModel : ObservableObject
     {
         MainViewModel _mainModel;
         Web_API API = new Web_API();
@@ -20,12 +16,29 @@ namespace ModernClient.MVVM1.ViewModel
         {
             _mainModel = mainModel;
             RegisterCommand = new RelayCommand(Register, CanRegister);
+            MainViewModel.connection.On<UserOut>("RegisterSuccess", (temp) =>
+            {
+                MenuView menu = new MenuView();
+                menu.DataContext = _mainModel;
+                LoginGet = null;
+                Password = null;
+                _mainModel.CurrentUser = temp;
+                _mainModel.SetNewContent(menu);
+
+            });
+            MainViewModel.connection.On<string>("UserExist", (temp) =>
+            {
+                LoginGet = "";
+                Password = "";
+                Error = "Пользователь с таким именем уже существует";
+            });
+
         }
 
         private void Register(object _param)
         {
             menu.DataContext = _mainModel;
-            Login_command();
+            Login_commandWs();
         }
 
         private bool CanRegister(object _param)
@@ -72,7 +85,7 @@ namespace ModernClient.MVVM1.ViewModel
                     LoginGet = null;
                     Password = null;
                     _mainModel.CurrentUser = (UserOut)response;
-                    MainViewModel.timer_users.Start();
+                    //MainViewModel.timer_users.Start();
                     _mainModel.SetNewContent(menu);
                 }
                 else if (response.GetType() == typeof(int))
@@ -98,7 +111,27 @@ namespace ModernClient.MVVM1.ViewModel
                 Error = "Введите пароль";
             }
         }
-
+        public async void Login_commandWs()
+        {
+            Error = "";
+            if ((LoginGet != null && Password != null) || (LoginGet != "" && Password != ""))
+            {
+                await MainViewModel.connection.InvokeAsync("Register", new UserOut
+                {
+                    Name = LoginGet,
+                    Pass = Password
+                });
+                
+            }
+            else if (LoginGet == null || LoginGet == "")
+            {
+                Error = "Введите имя пользователя";
+            }
+            else if (Password == null || Password == "")
+            {
+                Error = "Введите пароль";
+            }
+        }
         private string _error;
 
         public string Error
