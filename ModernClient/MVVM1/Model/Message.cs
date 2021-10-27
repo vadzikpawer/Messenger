@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ModernClient.Core;
+using System;
 
 namespace ModernClient.MVVM1.Model
 {
     [Serializable]
-    public class Message
+    public class Message: ObservableObject
     {
 
         public int Id { get; set; }
@@ -21,7 +22,17 @@ namespace ModernClient.MVVM1.Model
 
         public bool IsSticker { get; set; }
 
-        public string PathToSticker { get; set; }
+        public string _PathToSticker { get; set; }
+        public string PathToSticker { 
+            get
+            {
+                return _PathToSticker;
+            } set 
+            {
+                _PathToSticker = value;
+                OnPropertyChanged("PathToSticker");
+            } }
+        
 
         public override string ToString()
         {

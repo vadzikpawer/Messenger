@@ -168,12 +168,35 @@
                         Grid.ColumnSpan="2">
                     <Grid HorizontalAlignment="Stretch"
                           Margin="8">
+                        <StackPanel Orientation="Horizontal">
                         <Label x:Name= "User2" 
                                Content="{Binding SelectedUser.Name}"
                                Foreground="white"
                                FontWeight="Bold"
                                Margin="5,0,5,0"
                                VerticalAlignment="Center"/>
+                            <Label x:Name= "UserOneline"
+                               FontWeight="Bold"
+                               Margin="5,0,5,0"
+                               VerticalAlignment="Center">
+
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedUser.Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="Content" Value="Online"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedUser.Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="Content" Value="Offline"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+
+                            </Label>
+                        </StackPanel>
                     </Grid>
                 </Border>
 

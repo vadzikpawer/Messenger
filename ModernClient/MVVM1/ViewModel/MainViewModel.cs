@@ -401,7 +401,7 @@ namespace ModernClient.MVVM1.ViewModel
                     });*/
                     if (message.IsSticker)
                     {
-                        message.PathToSticker = Directory.GetCurrentDirectory() + "//Images//Stickers//" + message.PathToSticker;
+                        message.PathToSticker = Directory.GetCurrentDirectory() + "\\Images\\Stickers\\" + message.PathToSticker;
                     }
                     message.dateStapm = message.dateStapm.ToLocalTime();
                     Messages.Add(message);
@@ -409,21 +409,20 @@ namespace ModernClient.MVVM1.ViewModel
                 }
             });
 
-            connection.On<ObservableCollection<Message>>("ReceiveMessages", temp =>
+            connection.On<List<Message>>("ReceiveMessages", temp =>
             {
                 Messages.Clear();
                 for (int i = 0; i < temp.Count; i++)
                 {
-                    Messages.Add(temp[i]);
-                    if (Messages[i].IsSticker)
+                    if (temp[i].IsSticker)
                     {
-                        Messages[i].PathToSticker = Directory.GetCurrentDirectory() + "//Images//Stickers//" + Messages[i].PathToSticker;
+                        temp[i].PathToSticker = Directory.GetCurrentDirectory() + "\\Images\\Stickers\\" + temp[i].PathToSticker;
                     }
-                    Messages[i].dateStapm = Messages[i].dateStapm.ToLocalTime();
+                    temp[i].dateStapm = temp[i].dateStapm.ToLocalTime();
+                    Messages.Add(temp[i]);
                 }
                 SelectedUser.Messages = Messages;
                 OnPropertyChanged("SelectedUser");
-                OnPropertyChanged("Messages");
             }
             );
 
