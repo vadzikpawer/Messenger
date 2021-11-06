@@ -37,8 +37,28 @@
                                 <Setter Property="Background" Value="#00204b" />
                                 <Setter Property="Foreground" Value="#92ADD2" />
                             </Trigger>
-
-
+                            <EventTrigger RoutedEvent="Button.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
+                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
+                                                             RepeatBehavior="1x" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Button.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                  Storyboard.TargetProperty="(Button.Opacity)"
+                  To="1" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -103,7 +123,7 @@
                         CornerRadius="15"
                         Margin="0,0,0,25">
 
-                    <TextBox x:Name="PassBox" 
+                    <PasswordBox x:Name="PassBox" 
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Width="130"
@@ -112,9 +132,7 @@
                                  VerticalAlignment="Bottom"
                                  CaretBrush="White"
                                  Foreground="White"
-                                 Margin="0,0,0,5"
-                                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             />
+                                 Margin="0,0,0,5"/>
                 </Border>
 
                 <Button x:Name="Login" 
@@ -124,9 +142,10 @@
                         Width="150" 
                         Command="{Binding RegisterCommand}"
                         Margin="0,0,0,10"
+                        Cursor="Hand"
                         />
 
-                <Label Content="{Binding Error, UpdateSourceTrigger=PropertyChanged}"
+                <Label Content="{Binding Path=Error, UpdateSourceTrigger=PropertyChanged}"
                        Background="Transparent"
                        Foreground="White"
                        FontSize="20"

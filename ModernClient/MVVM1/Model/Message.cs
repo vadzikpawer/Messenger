@@ -4,7 +4,7 @@ using System;
 namespace ModernClient.MVVM1.Model
 {
     [Serializable]
-    public class Message: ObservableObject
+    public class Message : ObservableObject
     {
 
         public int Id { get; set; }
@@ -21,18 +21,22 @@ namespace ModernClient.MVVM1.Model
         public DateTime dateStapm { get; set; }
 
         public bool IsSticker { get; set; }
+        public bool IsSeen { get; set; }
 
         public string _PathToSticker { get; set; }
-        public string PathToSticker { 
+        public string PathToSticker
+        {
             get
             {
                 return _PathToSticker;
-            } set 
+            }
+            set
             {
                 _PathToSticker = value;
                 OnPropertyChanged("PathToSticker");
-            } }
-        
+            }
+        }
+
 
         public override string ToString()
         {

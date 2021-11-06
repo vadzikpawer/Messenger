@@ -4,7 +4,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <VirtualizingStackPanel Orientation="Horizontal">
                         <Border Width="30" Height="30" Name="Ava"
                                 CornerRadius="25"
                                 VerticalAlignment="Stretch">
@@ -15,28 +15,28 @@
                             </Border.Style>
                         </Border>
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding FromName}"
+                            <VirtualizingStackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FromName}"
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
-                                       Margin="0, 0, -5, 0"
+                                       Margin="2, 4, 4, 4"
                                        Foreground="{Binding Color}"/>
 
-                                <Label Content="{Binding dateStapm}"
+                                <TextBlock Text="{Binding dateStapm}"
                                        Foreground="Gray"
                                        FontSize="8"
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
-                            </StackPanel>
+                            </VirtualizingStackPanel>
 
-                            <Label x:Name="Text" 
-                                   Content="{Binding Text}"
+                            <TextBlock x:Name="Text" 
+                                   Text="{Binding Text}"
                                    VerticalAlignment="Center"
                                    Foreground="White"
-                                   Margin="0,-5,0,0">
+                                   Margin="2, 0, 0, 0">
 
-                                <Label.Style>
-                                    <Style TargetType="Label">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsSticker}" Value="True">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -46,15 +46,15 @@
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </Label.Style>
-                            </Label>
+                                </TextBlock.Style>
+                            </TextBlock>
                             
                             <Image x:Name="Sticker" 
                                    Source="{Binding PathToSticker}"
                                    Width="150"
                                    Height="150"
                                    RenderOptions.BitmapScalingMode="Fant"
-                                   Margin="8,0,0,0"
+                                   Margin="0,0,0,0"
                                    Stretch="Fill"
                                    >
 
@@ -72,7 +72,7 @@
                                 </Image.Style>
                             </Image>
                         </StackPanel>
-                    </StackPanel>
+                    </VirtualizingStackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

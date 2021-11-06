@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:local="clr-namespace:ModernClient"
         xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
         xmlns:w="clr-namespace:System.Windows.Workarounds"
@@ -12,9 +13,15 @@
         >
 
     <UserControl.Resources>
+        <CollectionViewSource x:Key='src' 
+                              Source="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}" 
+                              IsLiveSortingRequested="True">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="LastMessage" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
 
-
-        <Style x:Key="InformButton" TargetType="Button">
+            <Style x:Key="InformButton" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Margin" Value="2"/>
             <Setter Property="FontFamily" Value="Verdana"/>
@@ -38,6 +45,28 @@
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="Button.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
+                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
+                                                             RepeatBehavior="1x" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Button.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                  Storyboard.TargetProperty="(Button.Opacity)"
+                  To="1" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#4a70a5" />
                                 <Setter Property="Foreground" Value="#92ADD2" />
@@ -50,7 +79,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-
+    
     <Border>
         <Grid Width="auto" Height="auto">
             <Grid.ColumnDefinitions>
@@ -133,13 +162,14 @@
                     Grid.Row="1"
                     CornerRadius="0, 0, 25, 0">
                 <ListView x:Name="Users" 
-                          ItemsSource="{Binding Users, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                          ItemsSource="{Binding Source={StaticResource src}, IsAsync=True}"
                           SelectedItem="{Binding SelectedUser}"
                           BorderThickness="0"
                           Background="Transparent"
                           ItemContainerStyle="{StaticResource ContactCard}" 
                           SelectionChanged="Users_SelectionChanged"
-                          VirtualizingPanel.ScrollUnit="Pixel">
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          VirtualizingPanel.IsVirtualizing="True">
                 </ListView>
                 
                 
@@ -166,36 +196,44 @@
                         BorderThickness="0, 4, 4, 4"
                         CornerRadius="0, 25, 25, 0"
                         Grid.ColumnSpan="2">
-                    <Grid HorizontalAlignment="Stretch"
-                          Margin="8">
+                    <Grid HorizontalAlignment="Center"
+                          Margin="2">
                         <StackPanel Orientation="Horizontal">
-                        <Label x:Name= "User2" 
-                               Content="{Binding SelectedUser.Name}"
-                               Foreground="white"
-                               FontWeight="Bold"
-                               Margin="5,0,5,0"
-                               VerticalAlignment="Center"/>
-                            <Label x:Name= "UserOneline"
-                               FontWeight="Bold"
-                               Margin="5,0,5,0"
-                               VerticalAlignment="Center">
+                            <Border x:Name="ColorSelectedUser" 
+                                    CornerRadius="25"
+                                    Width="25"
+                                    Height="25"
+                                    Background="{Binding SelectedUser.Color}"
+                                    Margin="0,-2,0,0"/>
+                            <StackPanel Orientation="Vertical">
+                                <Label x:Name= "User2" 
+                                   Content="{Binding SelectedUser.Name}"
+                                   Foreground="white"
+                                   FontWeight="Bold"
+                                   Margin="5,-2,5,0"
+                                   VerticalAlignment="Center"/>
+                                <Label x:Name= "UserOneline"
+                                       FontWeight="Bold"
+                                       Margin="5,-10,5,-10"
+                                       VerticalAlignment="Center">
 
-                                <Label.Style>
-                                    <Style TargetType="Label">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SelectedUser.Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
-                                                <Setter Property="Foreground" Value="Green"/>
-                                                <Setter Property="Content" Value="Online"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedUser.Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
-                                                <Setter Property="Foreground" Value="Red"/>
-                                                <Setter Property="Content" Value="Offline"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Label.Style>
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedUser.Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                                                    <Setter Property="Foreground" Value="Green"/>
+                                                    <Setter Property="Content" Value="Online"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedUser.Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="Content" Value="Offline"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
 
-                            </Label>
+                                </Label>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -214,6 +252,11 @@
                           ItemContainerStyle="{StaticResource ChatItem}"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           w:ListView.AutoScroll="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.IsContainerVirtualizable="True"
+                          VirtualizingPanel.CacheLengthUnit="Item"
+                         
                          />
 
 

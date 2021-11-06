@@ -2,6 +2,9 @@
 using ModernClient.Core;
 using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ObservableObject = ModernClient.Core.ObservableObject;
 
@@ -10,7 +13,6 @@ namespace ModernClient.MVVM1.ViewModel
     class LoginViewModel : ObservableObject
     {
         MainViewModel _mainModel;
-        Web_API API = new Web_API();
 
         public ICommand LoginCommand { get; private set; }
 
@@ -23,7 +25,7 @@ namespace ModernClient.MVVM1.ViewModel
                 MenuView menu = new MenuView();
                 menu.DataContext = _mainModel;
                 LoginGet = null;
-                Password = null;
+                LoginView.pass.Password = null;
                 _mainModel.CurrentUser = temp;
                 _mainModel.SetNewContent(menu);
 
@@ -32,7 +34,7 @@ namespace ModernClient.MVVM1.ViewModel
             MainViewModel.connection.On<string>("LoginError", (temp) =>
             {
                 LoginGet = "";
-                Password = "";
+                LoginView.pass.Password = "";
                 Error = "Пользователь с таким именем и паролем не найден";
             });
         }
@@ -59,79 +61,65 @@ namespace ModernClient.MVVM1.ViewModel
             }
         }
 
-        private string _password;
-
-        public string Password
+        static string ComputeSha256Hash(string rawData)
         {
-            get { return _password; }
-            set
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
             {
-                _password = value;
-                OnPropertyChanged();
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
 
-        //public async void Login_command()
-        //{
-        //    Error = "";
-        //    if ((LoginGet != null && Password != null) || (LoginGet != "" && Password != ""))
-        //    {
-        //        var response = await API.Get_User_async(new UserOut
-        //        {
-        //            Name = LoginGet,
-        //            Pass = Password
-        //        });
-        //        if (response.GetType() == typeof(UserOut))
-        //        {
-        //            MenuView menu = new MenuView();
-        //            menu.DataContext = _mainModel;
-        //            LoginGet = null;
-        //            Password = null;
-        //            _mainModel.CurrentUser = (UserOut)response;
-        //            //MainViewModel.timer_users.Start();
-        //            _mainModel.SetNewContent(menu);
-        //        }
-        //        else if (response.GetType() == typeof(int))
-        //        {
-        //            if ((int)response == 404)
-        //            {
-        //                LoginGet = "";
-        //                Password = "";
-        //                Error = "Пользователь с таким именем и паролем не найден";
-        //            }
-        //        }
-        //        else if (response.GetType() == typeof(string))
-        //        {
-        //            Error = (string)response;
-        //        }
-        //    }
-        //    else if (LoginGet == null || LoginGet == "")
-        //    {
-        //        Error = "Введите имя пользователя";
-        //    }
-        //    else if (Password == null || Password == "")
-        //    {
-        //        Error = "Введите пароль";
-        //    }
-        //}
+        static string ComputeSha512Hash(string rawData)
+        {
+            // Create a SHA256   
+            using (SHA512 sha256Hash = SHA512.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
 
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
         public async void Login_commandWs()
         {
-            if ((LoginGet != null && Password != null) || (LoginGet != "" && Password != ""))
+            if (MainViewModel.connection.State == HubConnectionState.Connected)
             {
-                await MainViewModel.connection.InvokeAsync("Login", new UserOut
+                if ((LoginGet != null && LoginView.pass.Password != null) || (LoginGet != "" && LoginView.pass.Password != ""))
                 {
-                    Name = LoginGet,
-                    Pass = Password
-                });
+                    await MainViewModel.connection.InvokeAsync("Login", new UserOut
+                    {
+                        Name = LoginGet,
+                        Pass = ComputeSha512Hash(LoginView.pass.Password)
+                    });
+                }
+                else if (LoginGet == null || LoginGet == "")
+                {
+                    Error = "Введите имя пользователя";
+                }
+                else if (LoginView.pass.Password == null || LoginView.pass.Password == "")
+                {
+                    Error = "Введите пароль";
+                }
             }
-            else if (LoginGet == null || LoginGet == "")
+            else
             {
-                Error = "Введите имя пользователя";
-            }
-            else if (Password == null || Password == "")
-            {
-                Error = "Введите пароль";
+                Error = "Сервер недоступен";
             }
         }
 

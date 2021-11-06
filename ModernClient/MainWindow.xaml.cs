@@ -49,11 +49,14 @@ namespace ModernClient
 
         private async void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (mainModel.CurrentUser != null)
+            if (MainViewModel.connection.State != HubConnectionState.Disconnected)
             {
-                await MainViewModel.connection.InvokeAsync("LogOut", mainModel.CurrentUser);
+                if (mainModel.CurrentUser != null)
+                {
+                    await MainViewModel.connection.InvokeAsync("LogOut", mainModel.CurrentUser);
+                }
+                await MainViewModel.connection.StopAsync();
             }
-            await MainViewModel.connection.StopAsync();
             Application.Current.Shutdown();
         }
 

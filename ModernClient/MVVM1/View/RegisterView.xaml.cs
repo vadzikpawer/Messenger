@@ -7,9 +7,11 @@ namespace ModernClient.MVVM1.View
     /// </summary>
     public partial class RegisterView : UserControl
     {
+        public static PasswordBox pass;
         public RegisterView()
         {
             InitializeComponent();
+            pass = PassBox;
         }
     }
 }

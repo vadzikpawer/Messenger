@@ -35,6 +35,28 @@
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="Button.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
+                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
+                                                             RepeatBehavior="1x" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Button.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                  Storyboard.TargetProperty="(Button.Opacity)"
+                  To="1" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#00204b" />
                                 <Setter Property="Foreground" Value="#92ADD2" />
@@ -46,6 +68,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </UserControl.Resources>
 
 
@@ -56,7 +79,10 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Image Source="/Images/logo.png"
-                    RenderOptions.BitmapScalingMode="Fant"/>
+                    RenderOptions.BitmapScalingMode="Fant"
+                   x:Name="loadingImage">
+                
+            </Image>
 
 
             <StackPanel Orientation="Vertical"
@@ -105,7 +131,7 @@
                         CornerRadius="15"
                         Margin="0,0,0,25">
 
-                    <TextBox x:Name="PassBox" 
+                    <PasswordBox x:Name="PassBox" 
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Width="130"
@@ -115,7 +141,6 @@
                                  CaretBrush="White"
                                  Foreground="White"
                                  Margin="0,0,0,5"
-                                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              />
                 </Border>
 
@@ -125,7 +150,9 @@
                         Height="30"
                         Width="150" 
                         Command="{Binding LoginCommand}"
-                        Margin="0,0,0,10"
+                        Margin="0,0,0,10" 
+                        Click="Login_Click"
+                        Cursor="Hand"
                         />
 
                 <Label Content="{Binding Error}"

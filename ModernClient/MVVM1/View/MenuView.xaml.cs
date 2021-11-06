@@ -29,7 +29,6 @@ namespace ModernClient.MVVM1.View
         private void Home_button_Click(object sender, RoutedEventArgs e)
         {
             Users.UnselectAll();
-            MainViewModel.timer.Stop();
             BoxMessage.Visibility = Visibility.Collapsed;
             temp_logo.Visibility = Visibility.Visible;
         }

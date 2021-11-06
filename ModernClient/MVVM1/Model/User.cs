@@ -10,6 +10,8 @@ namespace ModernClient.MVVM1.Model
     {
 
         private int _id;
+        private bool _haveUnseen = false;
+        private int _unseen = 0;
         private string _name;
         private string _pass;
         private string _color;
@@ -91,11 +93,34 @@ namespace ModernClient.MVVM1.Model
             set
             {
                 _lastmessage = value;
-                OnPropertyChanged("User");
+                OnPropertyChanged("LastMessage");
             }
         }
 
-        //public string LastMessage => Messages.Last().Text;
-        //deserelize to db
+        public bool HaveUnseen
+        {
+            get
+            {
+                return _haveUnseen;
+            }
+            set
+            {
+                _haveUnseen = value;
+                OnPropertyChanged("HaveUnseen");
+            }
+        }
+
+        public int Unseen
+        {
+            get
+            {
+                return _unseen;
+            }
+            set
+            {
+                _unseen = value;
+                OnPropertyChanged("Unseen");
+            }
+        }
     }
 }

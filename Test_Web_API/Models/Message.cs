@@ -35,7 +35,9 @@ namespace Test_Web_API.Models
         public bool IsSticker { get; set; }
         [Column("PathToSticker")]
         public string PathToSticker { get; set; }
-        // TODO: add datetime stamp
+        [Column("IsSeen")]
+        public bool IsSeen { get; set; }
+
         public override string ToString()
         {
             return $"{From} {To} {Text} {Id}";

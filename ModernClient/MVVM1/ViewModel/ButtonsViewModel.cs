@@ -1,5 +1,6 @@
 ﻿using ModernClient.Core;
 using ModernClient.MVVM1.View;
+using System;
 using System.Windows.Input;
 
 namespace ModernClient.MVVM1.ViewModel
@@ -19,17 +20,33 @@ namespace ModernClient.MVVM1.ViewModel
             RegisterSwitch = new RelayCommand(RegisterCommand, CanLogin);
         }
 
-        private void LoginCommand(object _param)
+        private async void LoginCommand(object _param)
         {
             LoginViewModel LoginVM = new LoginViewModel(_mainModel);
             login.DataContext = LoginVM;
+            try
+            {
+                await MainViewModel.connection.StartAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
             _mainModel.SetNewContent(login);
         }
 
-        private void RegisterCommand(object _param)
+        private async void RegisterCommand(object _param)
         {
             RegisterViewModel RegisterVM = new RegisterViewModel(_mainModel);
             register.DataContext = RegisterVM;
+            try
+            {
+                await MainViewModel.connection.StartAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
             _mainModel.SetNewContent(register);
         }
 

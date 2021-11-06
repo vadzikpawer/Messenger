@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Test_Web_API.Controllers;
 
@@ -20,8 +22,10 @@ namespace Test_Web_API.Models
             db = context;
             if (!db.Users.Any())
             {
-                db.Users.Add(new User { Name = "test1", Online = false, Pass = "test1", Color = UsersController.Colors[rnd.Next(UsersController.Colors.Count())] });
-                db.Users.Add(new User { Name = "test2", Online = false, Pass = "test2", Color = UsersController.Colors[rnd.Next(UsersController.Colors.Count())] });
+                string Salt1 = ComputeSalt();
+                string Salt2 = ComputeSalt();
+                db.Users.Add(new User { Name = "test1", Online = false, Pass = ComputeSha512Hash(ComputeSha512Hash("test1") + Salt1), Color = UsersController.Colors[rnd.Next(UsersController.Colors.Count())], Salt = Salt1 });
+                db.Users.Add(new User { Name = "test2", Online = false, Pass = ComputeSha512Hash(ComputeSha512Hash("test2") + Salt2), Color = UsersController.Colors[rnd.Next(UsersController.Colors.Count())], Salt = Salt2 });
                 db.SaveChanges();
             }
         }
@@ -31,6 +35,7 @@ namespace Test_Web_API.Models
             Console.WriteLine("WEEEEEEEEEEEEEEEBBBBB SOCKEEEEEEEEEEEEEEEEEEEEEEET");
             message.dateStapm = new DateTime();
             message.dateStapm = DateTime.UtcNow;
+            message.IsSeen = false;
             db.Messages.Add(message);
             await db.SaveChangesAsync();
             string _connectionID = db.Users.First(x => x.Id == message.To).ConnectionID;
@@ -46,10 +51,17 @@ namespace Test_Web_API.Models
             Console.WriteLine("GetLastMessage");
             try
             {
+                int unseen;
                 List<Message> Messages = await db.Messages.Where(x => (x.From == message.From && x.To == message.To) || (x.To == message.From && x.From == message.To)).ToListAsync();
-                Message LastMessage = Messages.Last();
-                DateTime DateStamp = LastMessage.dateStapm;
-                await Clients.Caller.SendAsync("RecieveLastMessage", DateStamp, message.To);
+                try
+                {
+                    unseen = (await db.Messages.Where(x => x.To == message.To && x.From == message.From && x.IsSeen == false).ToListAsync()).Count;
+                }
+                catch (Exception ex)
+                {
+                    unseen = 0;
+                }
+                await Clients.Caller.SendAsync("RecieveLastMessageFromAll", Messages.Last().dateStapm, message.From, unseen);
             }
             catch (Exception ex)
             {
@@ -63,8 +75,34 @@ namespace Test_Web_API.Models
             Console.WriteLine("GetMessages");
             try
             {
-                List<Message> Messages = await db.Messages.Where(x => (x.From == message.From && x.To == message.To) || (x.To == message.From && x.From == message.To)).ToListAsync();
+                List<Message> Messages = await db.Messages.Where(x => (x.To == message.From && x.From == message.To) || (x.From == message.From && x.To == message.To)).ToListAsync();
                 await Clients.Caller.SendAsync("ReceiveMessages", Messages);
+                for (int i = 0; i < Messages.Count; i++)
+                {
+                    Messages[i].IsSeen = true;
+                    db.Messages.Update(Messages[i]);
+                }
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await Clients.Caller.SendAsync("NoMessage", "");
+            }
+        }
+
+        public async Task SeenAllMessages(Message message)
+        {
+            Console.WriteLine("SeenAllMessages");
+            try
+            {
+                List<Message> Messages = await db.Messages.Where(x => x.To == message.From && x.From == message.To).ToListAsync();
+                for (int i = 0; i < Messages.Count; i++)
+                {
+                    Messages[i].IsSeen = true;
+                    db.Messages.Update(Messages[i]);
+                }
+                await db.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -78,27 +116,37 @@ namespace Test_Web_API.Models
             Console.WriteLine("Login");
             try
             {
-                User usertemp = await db.Users.FirstAsync(x => x.Name == user.Name && user.Pass == x.Pass);
+                User usertemp = await db.Users.FirstAsync(x => x.Name == user.Name);
                 if (usertemp != null)
                 {
-
-                    usertemp.Pass = null;
-                    await Clients.Caller.SendAsync("LoginSuccess", usertemp);
-
-                    usertemp.Pass = user.Pass;
-                    usertemp.ConnectionID = Context.ConnectionId;
-                    usertemp.Online = true;
-                    db.Users.Update(usertemp);
-                    db.SaveChanges();
-
-                    List<User> Users = await db.Users.ToListAsync();
-                    for (int i = 0; i < Users.Count; i++)
+                    if (ComputeSha512Hash(user.Pass + usertemp.Salt) == usertemp.Pass)
                     {
-                        Users[i].Pass = null;
-                        Users[i].ConnectionID = null;
+
+                        usertemp.Pass = null;
+                        usertemp.Salt = null;
+                        await Clients.Caller.SendAsync("LoginSuccess", usertemp);
+
+                        usertemp.Pass = ComputeSha512Hash(user.Pass);
+                        usertemp.ConnectionID = Context.ConnectionId;
+                        usertemp.Online = true;
+                        db.Users.Update(usertemp);
+                        db.SaveChanges();
+
+                        List<User> Users = await db.Users.ToListAsync();
+                        for (int i = 0; i < Users.Count; i++)
+                        {
+                            Users[i].Pass = null;
+                            Users[i].ConnectionID = null;
+                            Users[i].Salt = null;
+                        }
+                        await Clients.All.SendAsync("UpdateUser", Users);
                     }
-                    await Clients.All.SendAsync("UpdateUser", Users);
-                }
+                    else
+                    {
+                        Console.WriteLine("NoUser");
+                        await Clients.Caller.SendAsync("LoginError", "NoUser");
+                    }
+                    }
                 else
                 {
                     Console.WriteLine("NoUser");
@@ -130,7 +178,7 @@ namespace Test_Web_API.Models
                 Users[i].Pass = null;
                 Users[i].ConnectionID = null;
             }
-            await Clients.All.SendAsync("UpdateUser", Users);
+            await Clients.AllExcept(Context.ConnectionId).SendAsync("UpdateUser", Users);
 
         }
 
@@ -144,8 +192,9 @@ namespace Test_Web_API.Models
             }
             catch
             {
-
+                _user.Salt = ComputeSalt();
                 _user.Online = true;
+                _user.Pass = ComputeSha512Hash(_user.Pass + _user.Salt);
                 _user.ConnectionID = Context.ConnectionId;
                 _user.Color = UsersController.Colors[rnd.Next(UsersController.Colors.Count())];
                 db.Users.Add(_user);
@@ -157,16 +206,80 @@ namespace Test_Web_API.Models
                 {
                     Users[i].Pass = null;
                     Users[i].ConnectionID = null;
+                    Users[i].Salt = null;
                 }
                 await Clients.All.SendAsync("UpdateUser", Users);
-                
-            }  
+
+            }
         }
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.Caller.SendAsync("GetConnectionId", Context.ConnectionId);
+            Console.WriteLine($"CONNECTED {Context.ConnectionId}");
             await base.OnConnectedAsync();
+        }
+
+        static string ComputeSha256Hash(string rawData)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+        static string ComputeSha512Hash(string rawData)
+        {
+            // Create a SHA256   
+            using (SHA512 sha256Hash = SHA512.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+        static string ComputeSalt()
+        {
+            // Определите минимальный и максимальный размеры соли.
+            int minSaltSize = 4;
+            int maxSaltSize = 8;
+
+            // Создать случайное число для размера соли.
+            Random random = new Random();
+            int saltSize = random.Next(minSaltSize, maxSaltSize);
+
+            // Выделите массив байтов, который будет содержать соль.
+            byte[] saltBytes = new byte[saltSize];
+
+            // Инициализируйте генератор случайных чисел.
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+
+            // Заполните соль криптографически сильными значениями байт.
+            rng.GetNonZeroBytes(saltBytes);
+
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < saltBytes.Length; i++)
+            {
+                builder.Append(saltBytes[i].ToString("x2"));
+            }
+            return builder.ToString();
         }
     }
 }

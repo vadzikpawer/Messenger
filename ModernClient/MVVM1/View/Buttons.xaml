@@ -37,7 +37,28 @@
                                 <Setter Property="Background" Value="#00204b" />
                                 <Setter Property="Foreground" Value="#92ADD2" />
                             </Trigger>
-
+                            <EventTrigger RoutedEvent="Button.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
+                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
+                                                             RepeatBehavior="1x"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Button.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                  Storyboard.TargetProperty="(Button.Opacity)"
+                  To="1" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
 
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -55,14 +76,16 @@
                 Style="{StaticResource InformButton1}"
                 Command="{Binding RegisterSwitch}"
                 Height="30"
-                Width="150">
+                Width="150"
+                Cursor="Hand">
             
         </Button>
         <Button Content="Вход"
                 Style="{StaticResource InformButton1}"
                 Command="{Binding LoginSwitch}"
                 Height="30"
-                Width="150">
+                Width="150"
+                Cursor="Hand">
 
         </Button>
         </StackPanel>

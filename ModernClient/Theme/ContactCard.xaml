@@ -5,6 +5,9 @@
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="#00204b"/>
             </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#00204b"/>
+            </Trigger>
         </Style.Triggers>
 
         <Setter Property="Background" Value="#04141f"/>
@@ -16,34 +19,67 @@
                             CornerRadius="4"
                             Margin="8, 2, 8, 2">
                         <StackPanel Orientation="Horizontal"
-                                    Margin="10, 0,0,0">
+                                    Margin="10, 0,0,0"
+                                    HorizontalAlignment="Stretch">
 
-
-                            <Border Width="30" Height="30" Background="{Binding Color}"
+                            <Border Width="30" Height="30" 
+                                    Background="{Binding Color}"
                                     CornerRadius="25"
                                     />
                             <StackPanel>
-                                <Label Content="{Binding Name}"
-                                       Foreground="White"/>
-                                <Label FontSize="10"
-                                       Margin="0, -10, 0,0"
+                                <TextBlock Text="{Binding Name}"
+                                           Foreground="White"
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           Margin="5, 7, 10,5"/>
+                                <TextBlock FontSize="10"
+                                       Margin="5,0, 0,5"
                                        FontWeight="Bold">
-                                    <Label.Style>
-                                        <Style TargetType="Label">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
                                                     <Setter Property="Foreground" Value="Green"/>
-                                                    <Setter Property="Content" Value="Online"/>
+                                                    <Setter Property="Text" Value="Online"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
                                                     <Setter Property="Foreground" Value="Red"/>
-                                                    <Setter Property="Content" Value="Offline"/>
+                                                    <Setter Property="Text" Value="Offline"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Label.Style>
-                                </Label>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
+                            <Border BorderThickness="0"
+                                    Width="25"
+                                    Height="25"
+                                    Background="#081117"
+                                    CornerRadius="25"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding Unseen, UpdateSourceTrigger=PropertyChanged}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="Red"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       >
+                                
+                            </TextBlock>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HaveUnseen, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding HaveUnseen,  UpdateSourceTrigger=PropertyChanged}" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
                         </StackPanel>
                     </Border>
                 </ControlTemplate>

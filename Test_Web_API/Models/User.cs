@@ -28,6 +28,8 @@ namespace Test_Web_API.Models
 
         [Column("Color")]
         public string Color { get; set; }
+        [Column("Salt")]
+        public string Salt { get; set; }
         [Column("ConnectionID")]
         public string ConnectionID { get; set; }
     }
