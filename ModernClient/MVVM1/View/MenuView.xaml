@@ -6,9 +6,10 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:local="clr-namespace:ModernClient"
         xmlns:viewModel="clr-namespace:ModernClient.MVVM1.ViewModel"
+        xmlns:bhv="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:w="clr-namespace:System.Windows.Workarounds"
-             
-             mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+        mc:Ignorable="d"
         Background="Transparent"
         >
 
@@ -19,9 +20,19 @@
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="LastMessage" Direction="Descending"/>
             </CollectionViewSource.SortDescriptions>
+            
         </CollectionViewSource>
 
-            <Style x:Key="InformButton" TargetType="Button">
+        <CollectionViewSource x:Key='srcMessages' 
+                              Source="{Binding SelectedUser.Messages, UpdateSourceTrigger=PropertyChanged}" 
+                              IsLiveGroupingRequested="True">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="dateStapm.Date"/>
+            </CollectionViewSource.GroupDescriptions>
+
+        </CollectionViewSource>
+
+        <Style x:Key="InformButton" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Margin" Value="2"/>
             <Setter Property="FontFamily" Value="Verdana"/>
@@ -240,7 +251,7 @@
 
 
                 <ListView x:Name="Chat"
-                          ItemsSource="{Binding SelectedUser.Messages}"
+                          ItemsSource="{Binding Source={StaticResource srcMessages}, IsAsync=True}"
                           Background="Transparent"
                           BorderThickness="0"
                           Margin="8,0,0,0"
@@ -257,7 +268,47 @@
                           VirtualizingPanel.IsContainerVirtualizable="True"
                           VirtualizingPanel.CacheLengthUnit="Item"
                          
-                         />
+                         >
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate >
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Day}"
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="."
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Month}"
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="."
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Year}"
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <i:Interaction.Behaviors>
+                        <local:ScrollIntoViewBehavior/>
+                    </i:Interaction.Behaviors>
+                </ListView>
 
 
 

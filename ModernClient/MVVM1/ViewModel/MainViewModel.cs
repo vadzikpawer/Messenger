@@ -7,10 +7,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using RelayCommand = ModernClient.Core.RelayCommand;
 
 namespace ModernClient.MVVM1.ViewModel
@@ -19,7 +17,7 @@ namespace ModernClient.MVVM1.ViewModel
     {
         public static string iplocal = "http://localhost:5000/chat";
         public static string ipserver = "http://168.63.110.193:80/chat";
-        
+
         public ObservableCollection<Message> Messages { get; set; }
         public ObservableCollection<User> Users { get; set; }
         public ObservableCollection<Sticker> Stickers { get; set; }
@@ -71,7 +69,7 @@ namespace ModernClient.MVVM1.ViewModel
                 OnPropertyChanged("SelectedUser");
             }
         }
-       
+
         public RelayCommand SendCommand { get; set; }
         public RelayCommand SendCommandWs { get; set; }
         public RelayCommand Home { get; set; }
@@ -125,7 +123,7 @@ namespace ModernClient.MVVM1.ViewModel
                 FromName = CurrentUser.Name,
                 Text = "",
                 Color = CurrentUser.Color,
-                dateStapm = System.DateTime.Now,
+                dateStapm = DateTime.Now,
                 IsSticker = true,
                 PathToSticker = SelectedSticker.NameForSent
             });
@@ -137,7 +135,7 @@ namespace ModernClient.MVVM1.ViewModel
                 FromName = CurrentUser.Name,
                 Text = "",
                 Color = CurrentUser.Color,
-                dateStapm = System.DateTime.Now,
+                dateStapm = DateTime.Now,
                 IsSticker = true,
                 PathToSticker = SelectedSticker.Name
             });
@@ -182,7 +180,7 @@ namespace ModernClient.MVVM1.ViewModel
             return true;
         }
 
-        public static HubConnection connection = new HubConnectionBuilder().WithUrl($"{iplocal}").Build();
+        public static HubConnection connection = new HubConnectionBuilder().WithUrl($"{ipserver}").Build();
 
         public MainViewModel()
         {
@@ -200,7 +198,7 @@ namespace ModernClient.MVVM1.ViewModel
                     foreach (var item in temp)
                     {
                         User tempuser1 = item;
-                        User tempuser2 = Users.FirstOrDefault(x => x.Id == tempuser1.Id);
+                        User tempuser2 = Users.Where(x => x.Id == tempuser1.Id).First();
                         tempuser2.Online = tempuser1.Online;
                     }
 
@@ -234,7 +232,7 @@ namespace ModernClient.MVVM1.ViewModel
 
             connection.On<DateTime, int, int>("RecieveLastMessageFromAll", (_tempdate, id, unseen) =>
             {
-                User temp = Users.First(x => x.Id == id);
+                User temp = Users.Where(x => x.Id == id).First();
                 temp.LastMessage = _tempdate.ToLocalTime();
                 if (unseen != 0)
                 {
@@ -266,7 +264,7 @@ namespace ModernClient.MVVM1.ViewModel
                         OnPropertyChanged("Messages");
                     }
                 }
-                User temp = Users.First(x => x.Id == message.From);
+                User temp = Users.Where(x => x.Id == message.From).First();
                 temp.LastMessage = message.dateStapm.ToLocalTime();
                 if (SelectedUser != null)
                 {
@@ -307,8 +305,9 @@ namespace ModernClient.MVVM1.ViewModel
             }
             );
 
-            connection.On<string>("NoMessage", _temp =>
+            connection.On<int>("NoMessage", _temp =>
            {
+               Users.Where(x => x.Id == _temp).First().LastMessage = DateTime.MinValue;
            });
 
             string searchFolder = Directory.GetCurrentDirectory() + "//Images//Stickers//";
@@ -331,7 +330,7 @@ namespace ModernClient.MVVM1.ViewModel
                         FromName = CurrentUser.Name,
                         Text = Message,
                         Color = CurrentUser.Color,
-                        dateStapm = System.DateTime.Now,
+                        dateStapm = DateTime.Now,
                         IsSticker = false
                     });
 

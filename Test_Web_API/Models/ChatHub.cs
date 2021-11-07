@@ -66,7 +66,7 @@ namespace Test_Web_API.Models
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await Clients.Caller.SendAsync("NoMessage", "");
+                await Clients.Caller.SendAsync("NoMessage", message.From);
             }
         }
 
@@ -87,7 +87,7 @@ namespace Test_Web_API.Models
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await Clients.Caller.SendAsync("NoMessage", "");
+                await Clients.Caller.SendAsync("NoMessage", message.From);
             }
         }
 
@@ -107,7 +107,7 @@ namespace Test_Web_API.Models
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await Clients.Caller.SendAsync("NoMessage", "");
+                await Clients.Caller.SendAsync("NoMessage", message.From);
             }
         }
 
@@ -121,12 +121,14 @@ namespace Test_Web_API.Models
                 {
                     if (ComputeSha512Hash(user.Pass + usertemp.Salt) == usertemp.Pass)
                     {
+                        string temp = usertemp.Salt;
 
                         usertemp.Pass = null;
                         usertemp.Salt = null;
                         await Clients.Caller.SendAsync("LoginSuccess", usertemp);
 
-                        usertemp.Pass = ComputeSha512Hash(user.Pass);
+                        usertemp.Salt = temp;
+                        usertemp.Pass = ComputeSha512Hash(user.Pass + usertemp.Salt);
                         usertemp.ConnectionID = Context.ConnectionId;
                         usertemp.Online = true;
                         db.Users.Update(usertemp);
@@ -146,7 +148,7 @@ namespace Test_Web_API.Models
                         Console.WriteLine("NoUser");
                         await Clients.Caller.SendAsync("LoginError", "NoUser");
                     }
-                    }
+                }
                 else
                 {
                     Console.WriteLine("NoUser");

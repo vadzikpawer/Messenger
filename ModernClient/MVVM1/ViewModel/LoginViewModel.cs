@@ -4,7 +4,6 @@ using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using ObservableObject = ModernClient.Core.ObservableObject;
 
