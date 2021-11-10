@@ -4,6 +4,7 @@ using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ModernClient.MVVM1.ViewModel
@@ -13,10 +14,12 @@ namespace ModernClient.MVVM1.ViewModel
         MainViewModel _mainModel;
         MenuView menu = new MenuView();
         public ICommand RegisterCommand { get; private set; }
+        public ICommand ChangeThemeCommand { get; private set; }
         public RegisterViewModel(MainViewModel mainModel)
         {
             _mainModel = mainModel;
             RegisterCommand = new RelayCommand(Register, CanRegister);
+            ChangeThemeCommand = new RelayCommand(ChangeTheme, CanRegister);
             MainViewModel.connection.On<UserOut>("RegisterSuccess", (temp) =>
             {
                 MenuView menu = new MenuView();
@@ -34,6 +37,21 @@ namespace ModernClient.MVVM1.ViewModel
                 Error = "Пользователь с таким именем уже существует";
             });
 
+        }
+
+        private void ChangeTheme(object _param)
+        {
+            var app = (App)Application.Current;
+            if (MainViewModel.CurrentTheme == "DarkTheme")
+            {
+                app.ChangeTheme(MainViewModel.LightTheme);
+                MainViewModel.CurrentTheme = "LightTheme";
+            }
+            else
+            {
+                app.ChangeTheme(MainViewModel.DarkTheme);
+                MainViewModel.CurrentTheme = "DarkTheme";
+            }
         }
 
         private void Register(object _param)

@@ -15,49 +15,7 @@
         x:Name="Boysband_messanger"
         WindowStartupLocation="CenterScreen"
         >
-
-    <Window.Resources>
-        <Style x:Key="InformButton" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="FontFamily" Value="Verdana"/>
-            <Setter Property="FontSize" Value="11px"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#4a70a5"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" 
-        				BorderThickness="0"
-        				Padding="4,2" 
-        				BorderBrush="red" 
-        				CornerRadius="15"
-                        Height="{TemplateBinding Height}"
-                        Width="{TemplateBinding Width}"
-        				Background="{TemplateBinding Background}">
-                            <Grid >
-                                <ContentPresenter HorizontalAlignment="Center" 
-                                                  VerticalAlignment="Center" 
-                                                  Name="content"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#00204b" />
-                                <Setter Property="Foreground" Value="#92ADD2" />
-                            </Trigger>
-
-
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-    </Window.Resources>
-
-    <Border Background="#04141f">
+    <Border Background="{DynamicResource BackgroundColor}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
@@ -65,7 +23,7 @@
             </Grid.RowDefinitions>
 
             <Border Grid.ColumnSpan="3"
-                    Background="#081117"
+                    Background="{DynamicResource AccentColor}"
                     CornerRadius="0"
                     MouseDown="Border_MouseDown"
                     VerticalAlignment="Center"
@@ -73,7 +31,7 @@
 
                 <Grid HorizontalAlignment="Stretch">
                     <Label Content="BoYsBaNd messanger"
-                           Foreground="Gray"
+                           Foreground="{DynamicResource TextColor}"
                            FontWeight="SemiBold"
                            Margin="10,0,0,0"
                            />
@@ -81,24 +39,31 @@
 
                     <StackPanel HorizontalAlignment="Right"
                                 Orientation="Horizontal">
-                        <Button x:Name="Minimize" Style="{StaticResource InformButton}" 
+                        <Button x:Name="Minimize" 
+                                Style="{StaticResource InformButton}" 
                                 Margin="0,6,5,0"
                                 Content="-"
                                 Width="18"
-                                HorizontalAlignment="Right" VerticalAlignment="Top" Click="Minimize_Click"
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Click="Minimize_Click"
                     />
-                        <Button x:Name="Full" Style="{StaticResource InformButton}" 
+                        <Button x:Name="Full"
+                                Style="{StaticResource InformButton}" 
                                 Margin="0,6,5,0"
                                 Content="▢"
                                 HorizontalAlignment="Right" 
-                                VerticalAlignment="Top" Click="Full_Click"
+                                VerticalAlignment="Top" 
+                                Click="Full_Click"
                                 Width="18"
                     />
-                        <Button x:Name="CloseA" Style="{StaticResource InformButton}" 
+                        <Button x:Name="CloseA" 
+                                Style="{StaticResource InformButton}" 
                                 Margin="0,6,10,0"
                                 Content="X"
                                 HorizontalAlignment="Right" 
-                                VerticalAlignment="Top" Click="Close_Click"
+                                VerticalAlignment="Top" 
+                                Click="Close_Click"
                                 Width="18"
                                 
                     />

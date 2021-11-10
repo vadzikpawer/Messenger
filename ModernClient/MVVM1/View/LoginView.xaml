@@ -8,70 +8,7 @@
              mc:Ignorable="d" 
              Background="Transparent">
 
-    <UserControl.Resources>
-        <Style x:Key="InformButton1" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="FontFamily" Value="Verdana"/>
-            <Setter Property="FontSize" Value="11px"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#4a70a5"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" 
-        				BorderThickness="0"
-        				Padding="4,2" 
-        				BorderBrush="red" 
-        				CornerRadius="15"
-                        Height="{TemplateBinding Height}"
-                        Width="{TemplateBinding Width}"
-        				Background="{TemplateBinding Background}">
-                            <Grid >
-                                <ContentPresenter HorizontalAlignment="Center" 
-                                                  VerticalAlignment="Center" 
-                                                  Name="content"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="Button.MouseEnter">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
-                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
-                                                             RepeatBehavior="1x" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="Button.MouseLeave">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                  Storyboard.TargetProperty="(Button.Opacity)"
-                  To="1" Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#00204b" />
-                                <Setter Property="Foreground" Value="#92ADD2" />
-                            </Trigger>
-
-
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
-    </UserControl.Resources>
-
-
+    
     <Border>
         <Grid>
             <Grid.RowDefinitions>
@@ -83,7 +20,19 @@
                    x:Name="loadingImage">
                 
             </Image>
+            <Button x:Name="ChangeTheme" 
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="50"
+                    Cursor="Hand" 
+                    FontSize="20"
+                    HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                    Content="{DynamicResource ChangeThemeButton}"
+                    Command="{Binding ChangeThemeCommand}">
 
+            </Button>
 
             <StackPanel Orientation="Vertical"
                         VerticalAlignment="Center"
@@ -92,8 +41,9 @@
                         Margin="0, -100, 0,0">
 
                 <Label Content="Username"
-                       Foreground="White"
+                       Foreground="{DynamicResource TextColor2}"
                        FontSize="20"
+                       FontWeight="Bold"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        Margin="8"/>
@@ -101,7 +51,7 @@
                 <Border Width="150"
                         Height="30"
                         BorderThickness="1"
-                        Background="#00204b"
+                        Background="{DynamicResource AccentColor4}"
                         CornerRadius="15"
                         HorizontalAlignment="Center">
 
@@ -109,17 +59,19 @@
                                  BorderThickness="0"
                                  Width="130"
                                  Height="25"
+                             FontWeight="Bold"
                                  VerticalAlignment="Bottom"
                                  VerticalContentAlignment="Bottom"
-                                 CaretBrush="White"
-                                 Foreground="White"
+                                 CaretBrush="{DynamicResource TextColor2}"
+                                 Foreground="{DynamicResource TextColor2}"
                                  Margin="0,0,0,5"
                                  Text="{Binding LoginGet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
 
                 <Label Content="Password"
-                       Foreground="White"
+                       Foreground="{DynamicResource TextColor2}"
                        FontSize="20"
+                       FontWeight="Bold"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        Margin="8"/>
@@ -127,7 +79,7 @@
                 <Border Width="150"
                         Height="30"
                         BorderThickness="1"
-                        Background="#00204b"
+                        Background="{DynamicResource AccentColor4}"
                         CornerRadius="15"
                         Margin="0,0,0,25">
 
@@ -135,17 +87,18 @@
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Width="130"
+                                 FontWeight="Bold"
                                  Height="25"
                                  VerticalContentAlignment="Bottom"
                                  VerticalAlignment="Bottom"
-                                 CaretBrush="White"
-                                 Foreground="White"
+                                 CaretBrush="{DynamicResource TextColor2}"
+                                 Foreground="{DynamicResource TextColor2}"
                                  Margin="0,0,0,5"
                              />
                 </Border>
 
                 <Button x:Name="Login" 
-                        Style="{StaticResource InformButton1}"
+                        Style="{StaticResource InformButton}"
                         Content="ВХОД"
                         Height="30"
                         Width="150" 
@@ -157,7 +110,7 @@
 
                 <Label Content="{Binding Error}"
                        Background="Transparent"
-                       Foreground="White"
+                       Foreground="{DynamicResource TextColor2}"
                        FontSize="20"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"

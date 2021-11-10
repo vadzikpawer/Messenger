@@ -1,6 +1,7 @@
 ﻿using ModernClient.Core;
 using ModernClient.MVVM1.View;
 using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ModernClient.MVVM1.ViewModel
@@ -12,14 +13,30 @@ namespace ModernClient.MVVM1.ViewModel
         RegisterView register = new RegisterView();
         public ICommand LoginSwitch { get; private set; }
         public ICommand RegisterSwitch { get; private set; }
+        public ICommand ChangeThemeButtons{ get; private set; }
         public ButtonsViewModel(MainViewModel model)
         {
             _mainModel = model;
 
             LoginSwitch = new RelayCommand(LoginCommand, CanLogin);
             RegisterSwitch = new RelayCommand(RegisterCommand, CanLogin);
+            ChangeThemeButtons = new RelayCommand(ChangeTheme,CanLogin);
         }
 
+        private void ChangeTheme(object _param)
+        {
+            var app = (App)Application.Current;
+            if (MainViewModel.CurrentTheme == "DarkTheme")
+            {
+                app.ChangeTheme(MainViewModel.LightTheme);
+                MainViewModel.CurrentTheme = "LightTheme";
+            }
+            else
+            {
+                app.ChangeTheme(MainViewModel.DarkTheme);
+                MainViewModel.CurrentTheme = "DarkTheme";
+            }
+        }
         private async void LoginCommand(object _param)
         {
             LoginViewModel LoginVM = new LoginViewModel(_mainModel);

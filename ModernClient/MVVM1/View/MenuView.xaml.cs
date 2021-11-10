@@ -52,5 +52,10 @@ namespace ModernClient.MVVM1.View
                 MenuOpen = false;
             }
         }
+
+        private void ChangeTheme_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

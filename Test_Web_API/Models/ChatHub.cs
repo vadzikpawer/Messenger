@@ -76,12 +76,16 @@ namespace Test_Web_API.Models
             try
             {
                 List<Message> Messages = await db.Messages.Where(x => (x.To == message.From && x.From == message.To) || (x.From == message.From && x.To == message.To)).ToListAsync();
-                await Clients.Caller.SendAsync("ReceiveMessages", Messages);
+
                 for (int i = 0; i < Messages.Count; i++)
                 {
-                    Messages[i].IsSeen = true;
-                    db.Messages.Update(Messages[i]);
+                    if (Messages[i].To == message.From)
+                    {
+                        Messages[i].IsSeen = true;
+                        db.Messages.Update(Messages[i]);
+                    }
                 }
+                await Clients.Caller.SendAsync("ReceiveMessages", Messages);
                 await db.SaveChangesAsync();
             }
             catch (Exception ex)

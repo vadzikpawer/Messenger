@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:clr="clr-namespace:System;assembly=mscorlib">
+    <SolidColorBrush x:Key="BackgroundColor" Color="#9CB2C1"/>
+    <SolidColorBrush x:Key="AccentColor" Color="#C0D3E0"/>
+    <SolidColorBrush x:Key="AccentColor2" Color="#335E7D"/>
+    <SolidColorBrush x:Key="AccentColor3" Color="Black"/>
+    <SolidColorBrush x:Key="AccentColor4" Color="#C8D6E0"/>
+    <SolidColorBrush x:Key="SeenIndicator" Color="Black"/>
+    <SolidColorBrush x:Key="TextColor" Color="Black"/>
+    <SolidColorBrush x:Key="TextColor2" Color="Black"/>
+    <clr:String x:Key="ChangeThemeButton">☾</clr:String>
+</ResourceDictionary>

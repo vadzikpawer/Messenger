@@ -6,74 +6,28 @@
              xmlns:local="clr-namespace:ModernClient.MVVM1.View"
              mc:Ignorable="d" 
              >
-    <UserControl.Resources>
-        <Style x:Key="InformButton1" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="FontFamily" Value="Verdana"/>
-            <Setter Property="FontSize" Value="11px"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#4a70a5"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" 
-        				BorderThickness="0"
-        				Padding="4,2" 
-        				BorderBrush="red" 
-        				CornerRadius="15"
-                        Height="{TemplateBinding Height}"
-                        Width="{TemplateBinding Width}"
-        				Background="{TemplateBinding Background}">
-                            <Grid >
-                                <ContentPresenter HorizontalAlignment="Center" 
-                                                  VerticalAlignment="Center" 
-                                                  Name="content"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#00204b" />
-                                <Setter Property="Foreground" Value="#92ADD2" />
-                            </Trigger>
-                            <EventTrigger RoutedEvent="Button.MouseEnter">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
-                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
-                                                             RepeatBehavior="1x"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="Button.MouseLeave">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                  Storyboard.TargetProperty="(Button.Opacity)"
-                  To="1" Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
+   
     
     <Grid>
+        <Button x:Name="ChangeTheme" 
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="50"
+                    Cursor="Hand" 
+                    FontSize="20"
+                    HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                    Content="{DynamicResource ChangeThemeButton}"
+                Command="{Binding ChangeThemeButtons}">
+
+        </Button>
         <StackPanel Orientation="Vertical"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
         <Button Content="Регистрация"
                 Margin="0,0,0,10"
-                Style="{StaticResource InformButton1}"
+                Style="{StaticResource InformButton}"
                 Command="{Binding RegisterSwitch}"
                 Height="30"
                 Width="150"
@@ -81,7 +35,7 @@
             
         </Button>
         <Button Content="Вход"
-                Style="{StaticResource InformButton1}"
+                Style="{StaticResource InformButton}"
                 Command="{Binding LoginSwitch}"
                 Height="30"
                 Width="150"

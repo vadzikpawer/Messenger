@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using RelayCommand = ModernClient.Core.RelayCommand;
@@ -15,8 +17,12 @@ namespace ModernClient.MVVM1.ViewModel
 {
     class MainViewModel : ObservableObject
     {
+        public static ResourceDictionary DarkTheme = new ResourceDictionary() { Source = new Uri("/Themes/DarkTheme.xaml", UriKind.RelativeOrAbsolute)};
+        public static ResourceDictionary LightTheme = new ResourceDictionary() { Source = new Uri("/Themes/LightTheme.xaml", UriKind.RelativeOrAbsolute)};
         public static string iplocal = "http://localhost:5000/chat";
         public static string ipserver = "http://168.63.110.193:80/chat";
+
+        public static string CurrentTheme  = "DarkTheme";
 
         public ObservableCollection<Message> Messages { get; set; }
         public ObservableCollection<User> Users { get; set; }
@@ -65,14 +71,22 @@ namespace ModernClient.MVVM1.ViewModel
             {
 
                 _SelectedUser = value;
-                Get_msgWs();
                 OnPropertyChanged("SelectedUser");
+                if (value != null)
+                {
+                    new Task(async () =>
+                    {
+                        await connection.InvokeAsync("GetMessages", new Message { From = CurrentUser.Id, FromName = CurrentUser.Name, To = _SelectedUser.Id });
+                    }).Start();
+                }
             }
         }
 
         public RelayCommand SendCommand { get; set; }
         public RelayCommand SendCommandWs { get; set; }
         public RelayCommand Home { get; set; }
+
+        public RelayCommand ChangeTheme { get; set; }
 
         private string _message;
 
@@ -108,13 +122,28 @@ namespace ModernClient.MVVM1.ViewModel
             set
             {
                 _selectedSticker = value;
-                SendStickerWs();
+                new Task(async () =>
+                {
+                    await SendStickerWs();
+                }).Start();
+                Messages.Add(new Message
+                {
+                    From = CurrentUser.Id,
+                    To = SelectedUser.Id,
+                    FromName = CurrentUser.Name,
+                    Text = "",
+                    Color = CurrentUser.Color,
+                    dateStapm = DateTime.Now,
+                    IsSticker = true,
+                    PathToSticker = SelectedSticker.Name
+                });
+                OnPropertyChanged("Messages");
                 OnPropertyChanged("SelectedSticker");
 
             }
         }
 
-        private async void SendStickerWs()
+        private async Task SendStickerWs()
         {
             await connection.InvokeAsync("Send", new Message
             {
@@ -128,27 +157,7 @@ namespace ModernClient.MVVM1.ViewModel
                 PathToSticker = SelectedSticker.NameForSent
             });
 
-            Messages.Add(new Message
-            {
-                From = CurrentUser.Id,
-                To = SelectedUser.Id,
-                FromName = CurrentUser.Name,
-                Text = "",
-                Color = CurrentUser.Color,
-                dateStapm = DateTime.Now,
-                IsSticker = true,
-                PathToSticker = SelectedSticker.Name
-            });
             SelectedUser.LastMessage = Messages.Last().dateStapm;
-            OnPropertyChanged("Messages");
-        }
-
-        private async void Get_msgWs()
-        {
-            if (_SelectedUser != null)
-            {
-                await connection.InvokeAsync("GetMessages", new Message { From = CurrentUser.Id, FromName = CurrentUser.Name, To = _SelectedUser.Id });
-            }
         }
 
         public static List<string> GetFilesFrom(string searchFolder, string[] filters, bool isRecursive)
@@ -188,7 +197,17 @@ namespace ModernClient.MVVM1.ViewModel
             Users = new ObservableCollection<User>();
             CurrentUser = new UserOut();
             Stickers = new ObservableCollection<Sticker>();
-            LogOut = new RelayCommand(LogOutCommand, CanLogOut);
+            LogOut = new RelayCommand(async o =>
+            {
+                ButtonsViewModel ButtonsVM = new ButtonsViewModel(this);
+                ButtonsView = new Buttons();
+                ButtonsView.DataContext = ButtonsVM;
+                Users.Clear();
+                Messages.Clear();
+                await connection.InvokeAsync("LogOut", CurrentUser);
+                CurrentUser = null;
+                SetNewContent(ButtonsView);
+            });
 
             connection.On<ObservableCollection<User>>("UpdateUser", temp =>
             {
@@ -275,7 +294,10 @@ namespace ModernClient.MVVM1.ViewModel
                     }
                     else
                     {
-                        connection.InvokeAsync("SeenAllMessages", new Message { From = CurrentUser.Id, FromName = CurrentUser.Name, To = SelectedUser.Id });
+                        new Task(async () =>
+                        {
+                            await connection.InvokeAsync("SeenAllMessages", new Message { From = CurrentUser.Id, FromName = CurrentUser.Name, To = SelectedUser.Id });
+                        }).Start();
                     }
                 }
                 else
@@ -347,6 +369,21 @@ namespace ModernClient.MVVM1.ViewModel
                     SelectedUser.LastMessage = Messages.Last().dateStapm;
                     Message = "";
                     OnPropertyChanged("Messages");
+                }
+            });
+
+            ChangeTheme = new RelayCommand(o =>
+            {
+                var app = (App)Application.Current;
+                if (CurrentTheme == "DarkTheme")
+                {
+                    app.ChangeTheme(LightTheme);
+                    CurrentTheme = "LightTheme";
+                }
+                else
+                { 
+                    app.ChangeTheme(DarkTheme);
+                    CurrentTheme = "DarkTheme";
                 }
             });
 

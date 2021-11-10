@@ -4,6 +4,7 @@ using ModernClient.MVVM1.Model;
 using ModernClient.MVVM1.View;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 using ObservableObject = ModernClient.Core.ObservableObject;
 
@@ -14,11 +15,13 @@ namespace ModernClient.MVVM1.ViewModel
         MainViewModel _mainModel;
 
         public ICommand LoginCommand { get; private set; }
+        public ICommand ChangeThemeCommand{ get; private set; }
 
         public LoginViewModel(MainViewModel mainModel)
         {
             _mainModel = mainModel;
             LoginCommand = new RelayCommand(Login, CanLogin);
+            ChangeThemeCommand = new RelayCommand(ChangeTheme, CanLogin);
             MainViewModel.connection.On<UserOut>("LoginSuccess", (temp) =>
             {
                 MenuView menu = new MenuView();
@@ -36,6 +39,21 @@ namespace ModernClient.MVVM1.ViewModel
                 LoginView.pass.Password = "";
                 Error = "Пользователь с таким именем и паролем не найден";
             });
+        }
+
+        private void ChangeTheme(object _param)
+        {
+            var app = (App)Application.Current;
+            if (MainViewModel.CurrentTheme == "DarkTheme")
+            {
+                app.ChangeTheme(MainViewModel.LightTheme);
+                MainViewModel.CurrentTheme = "LightTheme";
+            }
+            else
+            {
+                app.ChangeTheme(MainViewModel.DarkTheme);
+                MainViewModel.CurrentTheme = "DarkTheme";
+            }
         }
 
         private void Login(object _param)

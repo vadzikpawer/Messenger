@@ -15,7 +15,7 @@
 
     <UserControl.Resources>
         <CollectionViewSource x:Key='src' 
-                              Source="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}" 
+                              Source="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" 
                               IsLiveSortingRequested="True">
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="LastMessage" Direction="Descending"/>
@@ -31,64 +31,6 @@
             </CollectionViewSource.GroupDescriptions>
 
         </CollectionViewSource>
-
-        <Style x:Key="InformButton" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="FontFamily" Value="Verdana"/>
-            <Setter Property="FontSize" Value="11px"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#4a70a5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" 
-        				BorderThickness="0"
-        				Padding="4,2" 
-        				BorderBrush="red" 
-        				CornerRadius="100" 
-        				Background="{TemplateBinding Background}">
-                            <Grid >
-                                <ContentPresenter HorizontalAlignment="Center" 
-                                                  VerticalAlignment="Center" 
-                                                  Name="content"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="Button.MouseEnter">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="(Button.Opacity)"
-                                                             From="1.0" To="0.5" Duration="0:0:0.5" AutoReverse="True"
-                                                             RepeatBehavior="1x" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="Button.MouseLeave">
-                                <EventTrigger.Actions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                  Storyboard.TargetProperty="(Button.Opacity)"
-                  To="1" Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#4a70a5" />
-                                <Setter Property="Foreground" Value="#92ADD2" />
-                            </Trigger>
-
-
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
     
     <Border>
@@ -106,20 +48,34 @@
 
 
             <Button x:Name="Home_button_1" 
-                        Style="{StaticResource InformButton}"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Width="100"
-                        Grid.Column="1"
-                        Grid.Row="0"
-                        Cursor="Hand" 
-                    Click="Home_button_Click"
-                        >
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="100"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Cursor="Hand" 
+                    Click="Home_button_Click">
                 <Image RenderOptions.BitmapScalingMode="Fant" 
                        Source="/Images/logo.png"/>
             </Button>
+            <Button x:Name="ChangeTheme" 
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    FontSize="20"
+                    BorderThickness="0"
+                    Width="70"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Cursor="Hand" 
+                    Click="ChangeTheme_Click"
+                    HorizontalAlignment="Right"
+                    Content="{DynamicResource ChangeThemeButton}"
+                    Command="{Binding ChangeTheme}">
+                
+            </Button>
 
-            <StackPanel Background="#081117" Grid.Column="0" Grid.Row="0"/>
+            <StackPanel Background="{DynamicResource AccentColor}" Grid.Column="0" Grid.Row="0"/>
             <StackPanel Grid.Row="0" 
                         Orientation="Horizontal">
 
@@ -134,10 +90,10 @@
                         Content="{Binding CurrentUser.Name}"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Foreground="White"
+                        Foreground="{DynamicResource TextColor2}"
                         FontSize="20"
-                         Background="Transparent"
-                         BorderThickness="0"
+                        Background="Transparent"
+                        BorderThickness="0"
                        Width="auto"
                        Height="35"/>
                 </Border>
@@ -169,11 +125,11 @@
 
                 </Button>
             </StackPanel>
-            <Border Background="#081117"
+            <Border Background="{DynamicResource AccentColor}"
                     Grid.Row="1"
                     CornerRadius="0, 0, 25, 0">
                 <ListView x:Name="Users" 
-                          ItemsSource="{Binding Source={StaticResource src}, IsAsync=True}"
+                          ItemsSource="{Binding Source={StaticResource src}}"
                           SelectedItem="{Binding SelectedUser}"
                           BorderThickness="0"
                           Background="Transparent"
@@ -203,7 +159,7 @@
                     <RowDefinition Height="70"/>
                 </Grid.RowDefinitions>
 
-                <Border BorderBrush="#081117"
+                <Border BorderBrush="{DynamicResource AccentColor}"
                         BorderThickness="0, 4, 4, 4"
                         CornerRadius="0, 25, 25, 0"
                         Grid.ColumnSpan="2">
@@ -219,7 +175,7 @@
                             <StackPanel Orientation="Vertical">
                                 <Label x:Name= "User2" 
                                    Content="{Binding SelectedUser.Name}"
-                                   Foreground="white"
+                                   Foreground="{DynamicResource TextColor2}"
                                    FontWeight="Bold"
                                    Margin="5,-2,5,0"
                                    VerticalAlignment="Center"/>
@@ -278,27 +234,27 @@
                                         <TextBlock FontWeight="Bold" 
                                                FontSize="15"
                                                Text="{Binding Path=Name.Day}"
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextColor2}"
                                                HorizontalAlignment="Center"/>
                                         <TextBlock FontWeight="Bold" 
                                                FontSize="15"
                                                Text="."
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextColor2}"
                                                HorizontalAlignment="Center"/>
                                         <TextBlock FontWeight="Bold" 
                                                FontSize="15"
                                                Text="{Binding Path=Name.Month}"
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextColor2}"
                                                HorizontalAlignment="Center"/>
                                         <TextBlock FontWeight="Bold" 
                                                FontSize="15"
                                                Text="."
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextColor2}"
                                                HorizontalAlignment="Center"/>
                                         <TextBlock FontWeight="Bold" 
                                                FontSize="15"
                                                Text="{Binding Path=Name.Year}"
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextColor2}"
                                                HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
@@ -369,7 +325,7 @@
                 <Border Name="Stickers" 
                         Grid.Row="2"
                         Grid.Column="1"
-                        Background="#081117"
+                        Background="{DynamicResource AccentColor}"
                         Margin="0,40,10,0"
                         CornerRadius="25, 0, 25,0"
                         Visibility="Collapsed"
@@ -391,7 +347,7 @@
                                   
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel Margin="5,0,0,0"/>
+                                    <WrapPanel Margin="8,8,0,0"/>
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
                         </ListView>

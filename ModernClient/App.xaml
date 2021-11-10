@@ -9,12 +9,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="./Theme/StickerMenu.xaml"/>
-                <ResourceDictionary Source="./Theme/MenuButtonTheme.xaml"/>
                 <ResourceDictionary Source="./Theme/ContactCard.xaml"/>
                 <ResourceDictionary Source="./Theme/ChatItem.xaml"/>
                 <ResourceDictionary Source="./Theme/MessageBox.xaml"/>
                 <ResourceDictionary Source="./Theme/Stylishscrollbar.xaml"/>
+                <ResourceDictionary Source="./Theme/InformButton.xaml"/>
+                <ResourceDictionary Source="./Theme/DarkTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
 
             <DataTemplate DataType="{x:Type viewModel:MenuViewModel}">
                 <view:MenuView/>
