@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_Web_API", "Test_Web_API.csproj", "{FCB216C7-D4C4-4D7A-893F-CDFB3B7AB22E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernClient", "..\ModernClient\ModernClient.csproj", "{52282D7D-D428-4204-BD29-D2E652E2894B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernClientNet6", "..\ModerClientNet6\ModernClientNet6.csproj", "{44143106-345A-4288-B8BB-0946BB7FC4BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52282D7D-D428-4204-BD29-D2E652E2894B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44143106-345A-4288-B8BB-0946BB7FC4BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44143106-345A-4288-B8BB-0946BB7FC4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44143106-345A-4288-B8BB-0946BB7FC4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44143106-345A-4288-B8BB-0946BB7FC4BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

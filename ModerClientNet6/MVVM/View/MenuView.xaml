@@ -1,0 +1,375 @@
+﻿<UserControl x:Class="ModernClientNet6.MVVM.View.MenuView"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:local="clr-namespace:ModernClientNet6"
+        xmlns:viewModel="clr-namespace:ModernClientNet6.MVVM.ViewModel"
+        xmlns:bhv="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:w="clr-namespace:System.Windows.Workarounds"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        Background="Transparent"
+        >
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Key='src' 
+                              Source="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" 
+                              IsLiveSortingRequested="True">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="LastMessage" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+
+        </CollectionViewSource>
+
+        <CollectionViewSource x:Key='srcMessages' 
+                              Source="{Binding SelectedUser.Messages, UpdateSourceTrigger=PropertyChanged}" 
+                              IsLiveGroupingRequested="True">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="dateStapm.Date"/>
+            </CollectionViewSource.GroupDescriptions>
+
+        </CollectionViewSource>
+    </UserControl.Resources>
+
+    <Border>
+        <Grid Width="auto" Height="auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+
+
+            <Button x:Name="Home_button_1" 
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="100"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Cursor="Hand" 
+                    Click="Home_button_Click">
+                <Image RenderOptions.BitmapScalingMode="Fant" 
+                       Source="/Images/logo.png"/>
+            </Button>
+            <Button x:Name="ChangeTheme" 
+                    Style="{StaticResource InformButton}"
+                    Background="Transparent"
+                    FontSize="20"
+                    BorderThickness="0"
+                    Width="70"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Cursor="Hand" 
+                    Click="ChangeTheme_Click"
+                    HorizontalAlignment="Right"
+                    Content="{DynamicResource ChangeThemeButton}"
+                    Command="{Binding ChangeTheme}">
+
+            </Button>
+
+            <StackPanel Background="{DynamicResource AccentColor}" Grid.Column="0" Grid.Row="0"/>
+            <StackPanel Grid.Row="0" 
+                        Orientation="Horizontal">
+
+                <Border x:Name="Color_user" 
+                        CornerRadius="25"
+                        Width="30"
+                        Height="30"
+                        Background="{Binding CurrentUser.Color}"
+                        Margin="18 0 10 0"/>
+                <Border BorderThickness="0">
+                    <Label x:Name="Username"
+                        Content="{Binding CurrentUser.Name}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Foreground="{DynamicResource TextColor2}"
+                        FontSize="20"
+                        Background="Transparent"
+                        BorderThickness="0"
+                       Width="auto"
+                       Height="35"/>
+                </Border>
+                <Button x:Name="Home_button" 
+                        Style="{StaticResource InformButton}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="30"
+                        Height="30"
+                        Cursor="Hand" 
+                        Click="Home_button_Click"
+                        Command="{Binding Home}"
+                        Content="⌂"
+                        FontSize="22"
+                        Margin="0,0,0,0"
+                        >
+
+                </Button>
+                <Button x:Name="AcceptNik" 
+                        Style="{StaticResource InformButton}" 
+                        Content="⭙" 
+                        Background="Transparent"
+                        Width="30"
+                        Height="30"
+                        FontWeight="Bold"
+                        FontSize="20"
+                        Cursor="Hand"
+                        Command="{Binding LogOut}">
+
+                </Button>
+            </StackPanel>
+            <Border Background="{DynamicResource AccentColor}"
+                    Grid.Row="1"
+                    CornerRadius="0, 0, 25, 0">
+                <ListView x:Name="Users" 
+                          ItemsSource="{Binding Source={StaticResource src}}"
+                          SelectedItem="{Binding SelectedUser}"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          ItemContainerStyle="{StaticResource ContactCard}" 
+                          SelectionChanged="Users_SelectionChanged"
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          VirtualizingPanel.IsVirtualizing="True">
+                </ListView>
+
+
+            </Border>
+
+            <Grid x:Name="BoxMessage" 
+                  Grid.Row="1"
+                  Grid.Column="1" 
+                  Grid.ColumnSpan="2">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition MaxWidth="500"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+
+                <Border BorderBrush="{DynamicResource AccentColor}"
+                        BorderThickness="0, 4, 4, 4"
+                        CornerRadius="0, 25, 25, 0"
+                        Grid.ColumnSpan="2">
+                    <Grid HorizontalAlignment="Center"
+                          Margin="2">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="ColorSelectedUser" 
+                                    CornerRadius="25"
+                                    Width="25"
+                                    Height="25"
+                                    Background="{Binding SelectedUser.Color}"
+                                    Margin="0,-2,0,0"/>
+                            <StackPanel Orientation="Vertical">
+                                <Label x:Name= "User2" 
+                                   Content="{Binding SelectedUser.Name}"
+                                   Foreground="{DynamicResource TextColor2}"
+                                   FontWeight="Bold"
+                                   Margin="5,-2,5,0"
+                                   VerticalAlignment="Center"/>
+                                <Label x:Name= "UserOneline"
+                                       FontWeight="Bold"
+                                       Margin="5,-10,5,-10"
+                                       VerticalAlignment="Center">
+
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedUser.Online, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                                                    <Setter Property="Foreground" Value="Green"/>
+                                                    <Setter Property="Content" Value="Online"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedUser.Online,  UpdateSourceTrigger=PropertyChanged}" Value="false">
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                    <Setter Property="Content" Value="Offline"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+
+                                </Label>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+
+                <ListView x:Name="Chat"
+                          ItemsSource="{Binding Source={StaticResource srcMessages}, IsAsync=True}"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Margin="8,0,0,0"
+                          Grid.Row="1"
+                          Grid.RowSpan="2"
+                          Grid.ColumnSpan="2"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ItemContainerStyle="{StaticResource ChatItem}"
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          w:ListView.AutoScroll="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.IsContainerVirtualizable="True"
+                          VirtualizingPanel.CacheLengthUnit="Item">
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate >
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Day}"
+                                               Foreground="{DynamicResource TextColor2}"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="."
+                                               Foreground="{DynamicResource TextColor2}"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Month}"
+                                               Foreground="{DynamicResource TextColor2}"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="."
+                                               Foreground="{DynamicResource TextColor2}"
+                                               HorizontalAlignment="Center"/>
+                                        <TextBlock FontWeight="Bold" 
+                                               FontSize="15"
+                                               Text="{Binding Path=Name.Year}"
+                                               Foreground="{DynamicResource TextColor2}"
+                                               HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+
+                    <i:Interaction.Behaviors>
+                        <local:ScrollIntoViewBehavior/>
+                    </i:Interaction.Behaviors>
+                </ListView>
+
+
+
+                <Grid Grid.Row="3"
+                      Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="90"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Row="1"
+                             Height="50"
+                             Text="Message @Name"
+                             Style="{StaticResource MessageBox}"
+                             Grid.ColumnSpan="2"/>
+                    <StackPanel HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                Grid.Column="1"
+                                Margin="0,0,16,0">
+                        <Button x:Name="StickerMenu"  
+                                Style="{StaticResource InformButton}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="30"
+                                Height="25"
+                                Command="{Binding SendSticker}"
+                                Cursor="Hand" Click="StickerMenu_Click"
+                                >
+                            <Image Width="23"
+                                   Height="23"
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,2" Source="/Images/Sticker.png"/>
+                        </Button>
+                        <Button Style="{StaticResource InformButton}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="30"
+                                Height="25"
+                                Command="{Binding SendCommand}"
+                                Cursor="Hand"
+                                
+                                >
+                            <Image 
+                               Width="20"   
+                               Height="20"
+                               RenderOptions.BitmapScalingMode="Fant" 
+                               Source="/Images/Send.png"
+                               />
+                        </Button>
+
+                    </StackPanel>
+
+
+                </Grid>
+
+                <Border Name="Stickers" 
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Background="{DynamicResource AccentColor}"
+                        Margin="0,40,10,0"
+                        CornerRadius="25, 0, 25,0"
+                        Visibility="Collapsed"
+                        >
+                    <Grid VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch">
+                        <ListView Name="UsersList" 
+                                  Background="Transparent"
+                                  ItemsSource="{Binding Stickers}"
+                                  SelectedItem="{Binding SelectedSticker}"
+                                  BorderThickness="0"
+                                  ItemContainerStyle="{StaticResource StickerItem}"
+                                  VerticalContentAlignment="Stretch"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  HorizontalContentAlignment="Stretch"
+                                  SelectionChanged="Sticker_SelectionChanged">
+                            <!--VirtualizingPanel.ScrollUnit="Pixel"-->
+
+
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="8,8,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                    </Grid>
+                </Border>
+
+
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </Grid.Style>
+            </Grid>
+
+            <Image 
+                x:Name="temp_logo"
+                Grid.Row="2"
+                Grid.Column="1"
+                Visibility="Visible"
+                RenderOptions.BitmapScalingMode="Fant" 
+                Source="/Images/logo4.png"/>
+
+        </Grid>
+    </Border>
+
+</UserControl>

@@ -1,0 +1,141 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="ListViewItem" x:Key="ChatItem">
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            Height="auto"
+                            Width="250"
+                            CornerRadius="10"
+                            HorizontalAlignment="Left">
+                    <VirtualizingStackPanel Orientation="Horizontal"
+                                            Margin="8,8,8,9"
+                                            HorizontalAlignment="Stretch">
+                        <Border Width="30" Height="30" Name="Ava"
+                                CornerRadius="25"
+                                >
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{Binding Color}"/>
+                                        <Setter Property="Margin" Value="0,8,5,0"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                                                <Setter Property="Margin" Value="0,20,5,0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <VirtualizingStackPanel>
+                            <VirtualizingStackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FromName}"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Margin="2, 4, 4, 4"
+                                       Foreground="{Binding Color}"/>
+
+                                <TextBlock Text="{Binding dateStapm}"
+                                       Foreground="{DynamicResource TextColor}"
+                                       FontSize="8"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            </VirtualizingStackPanel>
+                                <StackPanel Orientation="Vertical" 
+                                            Width="150">
+                                    <TextBlock x:Name="Text" 
+                                   Text="{Binding Text}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextColor2}"
+                                   Margin="2, 0, 0, 0"
+                                       TextWrapping="Wrap">
+
+                                        
+                                    </TextBlock>
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSticker}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                </StackPanel>
+                            <Image x:Name="Sticker" 
+                                   Source="{Binding PathToSticker}"
+                                   Width="150"
+                                   Height="150"
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Stretch"
+                                   >
+
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSticker}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                                
+                            </VirtualizingStackPanel>
+                        <Border Width="10" 
+                                    Height="10"
+                                    CornerRadius="25"
+                                    Background="{DynamicResource SeenIndicator}"
+                                    HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Setter Property="Margin" Value="30,13,5,0"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSeen}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsSeen}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        </VirtualizingStackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Resources>
+            <ControlTemplate x:Key="CustomRow">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding Text}"
+                           Foreground="White"
+                           Margin="40, -2, 0, -2"/>
+                </StackPanel>
+                
+            </ControlTemplate>
+        </Style.Resources>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsSticker}" Value="True">
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </DataTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentColor2}"/>
+            </Trigger>
+        </Style.Triggers>
+        
+    </Style>
+</ResourceDictionary>

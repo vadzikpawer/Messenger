@@ -1,0 +1,79 @@
+﻿<Window x:Class="ModernClientNet6.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModernClientNet6"
+        xmlns:viewModel="clr-namespace:ModernClientNet6.MVVM.ViewModel"
+        mc:Ignorable="d"
+        Height="720" Width="1280"
+        MinHeight="720" MinWidth="1280"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        Background="Transparent"
+        AllowsTransparency="True"
+        x:Name="Boysband_messanger"
+        WindowStartupLocation="CenterScreen"
+        >
+    <Border Background="{DynamicResource BackgroundColor}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.ColumnSpan="3"
+                    Background="{DynamicResource AccentColor}"
+                    CornerRadius="0"
+                    MouseDown="Border_MouseDown"
+                    VerticalAlignment="Center"
+                    >
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Label Content="BoYsBaNd messanger"
+                           Foreground="{DynamicResource TextColor}"
+                           FontWeight="SemiBold"
+                           Margin="10,0,0,0"
+                           />
+
+
+                    <StackPanel HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <Button x:Name="Minimize" 
+                                Style="{StaticResource InformButton}" 
+                                Margin="0,6,5,0"
+                                Content="-"
+                                Width="18"
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Click="Minimize_Click"
+                    />
+                        <Button x:Name="Full"
+                                Style="{StaticResource InformButton}" 
+                                Margin="0,6,5,0"
+                                Content="▢"
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Click="Full_Click"
+                                Width="18"
+                    />
+                        <Button x:Name="CloseA" 
+                                Style="{StaticResource InformButton}" 
+                                Margin="0,6,10,0"
+                                Content="X"
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Click="Close_Click"
+                                Width="18"
+                                
+                    />
+                    </StackPanel>
+                </Grid>
+
+
+            </Border>
+            <ContentControl Grid.Row="1"
+                Content="{Binding CurrentView}"/>
+        </Grid>
+    </Border>
+</Window>
