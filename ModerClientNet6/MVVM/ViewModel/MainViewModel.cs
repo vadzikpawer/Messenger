@@ -53,15 +53,15 @@ namespace ModernClientNet6.MVVM.ViewModel
         public ObservableCollection<Sticker> Stickers { get; set; }
 
         private User _SelectedUser;
-        private UserOut _currentUser;
+
+        private static UserOut _currentUser;
         public ICommand LogOut { get; private set; }
-        public UserOut CurrentUser
+        public static UserOut CurrentUser
         {
             get { return _currentUser; }
             set
             {
                 _currentUser = value;
-                OnPropertyChanged("CurrentUser");
             }
         }
 
@@ -213,7 +213,10 @@ namespace ModernClientNet6.MVVM.ViewModel
             return true;
         }
 
-        public static HubConnection connection = new HubConnectionBuilder().WithUrl($"{ipserver}").Build();
+        public static HubConnection connection = new HubConnectionBuilder().WithUrl($"{iplocal}", options =>
+        {
+            options.AccessTokenProvider = () => Task.FromResult(CurrentUser.Token);
+        }).Build();
         public void WriteJson()
         {
             using (StreamWriter r = new StreamWriter("settings.json"))

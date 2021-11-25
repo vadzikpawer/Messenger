@@ -14,6 +14,8 @@ namespace ModernClientNet6.MVVM.Model
         public string Pass { get; set; }
 
         public string Color { get; set; }
+        public string Token { get; set; }
+
         //public string LastMessage => Messages.Last().Text;
         //deserelize to db
     }

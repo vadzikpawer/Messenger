@@ -111,7 +111,7 @@ namespace ModernClientNet6
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             string result;
-            var url = "http://localhost:5000/api/users/login";
+            var url = "http://localhost:5000/api/authorize/login";
             var client = new HttpClient();
             try
             {

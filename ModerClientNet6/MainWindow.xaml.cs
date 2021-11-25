@@ -23,7 +23,7 @@ namespace ModernClientNet6
             {
                 MenuView menu = new MenuView();
                 menu.DataContext = mainModel;
-                mainModel.CurrentUser = temp;
+                MainViewModel.CurrentUser = temp;
                 mainModel.SetNewContent(menu);
 
             });
@@ -95,9 +95,9 @@ namespace ModernClientNet6
         {
             if (MainViewModel.connection.State != HubConnectionState.Disconnected)
             {
-                if (mainModel.CurrentUser != null)
+                if (MainViewModel.CurrentUser != null)
                 {
-                    await MainViewModel.connection.InvokeAsync("LogOut", mainModel.CurrentUser);
+                    await MainViewModel.connection.InvokeAsync("LogOut", MainViewModel.CurrentUser);
                 }
                 await MainViewModel.connection.StopAsync();
             }

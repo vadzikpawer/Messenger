@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,6 +15,7 @@ namespace ModernClientNet6.MVVM.ViewModel
     class LoginViewModel : ObservableObject
     {
         MainViewModel _mainModel;
+        Web_API API = new Web_API();
 
         public ICommand LoginCommand { get; private set; }
         public ICommand ChangeThemeCommand{ get; private set; }
@@ -23,30 +25,7 @@ namespace ModernClientNet6.MVVM.ViewModel
             _mainModel = mainModel;
             LoginCommand = new RelayCommand(Login, CanLogin);
             ChangeThemeCommand = new RelayCommand(ChangeTheme, CanLogin);
-            MainViewModel.connection.On<UserOut>("LoginSuccess", (temp) =>
-            {
-                MainWindow.StartupSettings.RememberMe = (bool)LoginView.rememberMe.IsChecked;
-                if (MainWindow.StartupSettings.RememberMe)
-                {
-                    MainWindow.StartupSettings.Login = LoginGet;
-                    MainWindow.StartupSettings.Pass = ComputeSha512Hash(LoginView.pass.Password);
-                    WriteJson();
-                }
-                MenuView menu = new MenuView();
-                menu.DataContext = _mainModel;
-                LoginGet = null;
-                LoginView.pass.Password = null;
-                _mainModel.CurrentUser = temp;
-                _mainModel.SetNewContent(menu);
-
-            });
-
-            MainViewModel.connection.On<string>("LoginError", (temp) =>
-            {
-                LoginGet = "";
-                LoginView.pass.Password = "";
-                Error = "Пользователь с таким именем и паролем не найден";
-            });
+            
         }
 
         public void WriteJson()
@@ -55,6 +34,81 @@ namespace ModernClientNet6.MVVM.ViewModel
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(r, MainWindow.StartupSettings);
+            }
+        }
+
+        
+
+        public async void Login_command()
+        {
+            if (true)
+            {
+                if ((LoginGet != null && LoginView.pass.Password != null) || (LoginGet != "" && LoginView.pass.Password != ""))
+                {
+                    var response = await API.Get_User_async(new UserOut
+                    {
+                        Name = LoginGet,
+                        Pass = ComputeSha512Hash(LoginView.pass.Password)
+                    });
+                    if (response.GetType() == typeof(UserOut))
+                    {
+                        MainViewModel.CurrentUser = (UserOut)response;
+
+                        MainViewModel.connection = new HubConnectionBuilder().WithUrl($"{MainViewModel.iplocal}", options =>
+                        {
+                            options.AccessTokenProvider = () => Task.FromResult(MainViewModel.CurrentUser.Token);
+                        }).Build();
+                        MainViewModel.connection.On<UserOut>("LoginSuccess", (temp) =>
+                        {
+                            MainWindow.StartupSettings.RememberMe = (bool)LoginView.rememberMe.IsChecked;
+                            if (MainWindow.StartupSettings.RememberMe)
+                            {
+                                MainWindow.StartupSettings.Login = LoginGet;
+                                MainWindow.StartupSettings.Pass = ComputeSha512Hash(LoginView.pass.Password);
+                                WriteJson();
+                            }
+                            MenuView menu = new MenuView();
+                            menu.DataContext = _mainModel;
+                            LoginGet = null;
+                            LoginView.pass.Password = null;
+                            MainViewModel.CurrentUser = temp;
+                            _mainModel.SetNewContent(menu);
+
+                        });
+
+                        MainViewModel.connection.On<string>("LoginError", (temp) =>
+                        {
+                            LoginGet = "";
+                            LoginView.pass.Password = "";
+                            Error = "Пользователь с таким именем и паролем не найден";
+                        });
+                        await MainViewModel.connection.StartAsync();
+                    }
+                    else if ((int)response == 404)
+                    {
+                        LoginGet = "";
+                        LoginView.pass.Password = "";
+                        Error = "Пользователь с таким именем и паролем не найден";
+                    }
+                    else
+                    {
+                        LoginGet = "";
+                        LoginView.pass.Password = "";
+                        Error = "Сервер не доступен";
+                    }
+                }
+                else if (LoginGet == null || LoginGet == "")
+                {
+                    Error = "Введите имя пользователя";
+                }
+                else if (LoginView.pass.Password == null || LoginView.pass.Password == "")
+                {
+                    Error = "Введите пароль";
+                }
+            }
+            else
+            {
+                Error = "Сервер недоступен";
             }
         }
 
@@ -75,7 +129,7 @@ namespace ModernClientNet6.MVVM.ViewModel
 
         private void Login(object _param)
         {
-            Login_commandWs();
+            Login_command();
         }
 
         private bool CanLogin(object _param)

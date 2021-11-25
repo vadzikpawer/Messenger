@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using Test_Web_API.Controllers;
 
 namespace Test_Web_API.Models
 {
+    [Authorize]
     public class ChatHub : Hub
     {
 
@@ -18,7 +21,6 @@ namespace Test_Web_API.Models
 
         public ChatHub(AppDbContext context)
         {
-            db = context;
             db = context;
             if (!db.Users.Any())
             {
@@ -222,6 +224,28 @@ namespace Test_Web_API.Models
         public override async Task OnConnectedAsync()
         {
             Console.WriteLine($"CONNECTED {Context.ConnectionId}");
+            var name = Context.User.Claims.First().Value;
+            User user = db.Users.Where(x => x.Name == name).First();
+            string temp = user.Pass;
+
+            user.Pass = null;
+            await Clients.Caller.SendAsync("LoginSuccess", user);
+
+            user.Pass = temp;
+            user.ConnectionID = Context.ConnectionId;
+            user.Online = true;
+            db.Users.Update(user);
+            db.SaveChanges();
+
+            List<User> Users = await db.Users.ToListAsync();
+            for (int i = 0; i < Users.Count; i++)
+            {
+                Users[i].Pass = null;
+                Users[i].ConnectionID = null;
+                Users[i].Salt = null;
+                Users[i].Token = null;
+            }
+            await Clients.All.SendAsync("UpdateUser", Users);
             await base.OnConnectedAsync();
         }
 

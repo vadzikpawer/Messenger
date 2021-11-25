@@ -36,7 +36,7 @@ namespace ModernClientNet6.MVVM.ViewModel
                 menu.DataContext = _mainModel;
                 LoginGet = null;
                 RegisterView.pass.Password = null;
-                _mainModel.CurrentUser = temp;
+               MainViewModel.CurrentUser = temp;
                 _mainModel.SetNewContent(menu);
 
             });

@@ -14,6 +14,7 @@ namespace Test_Web_API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Не указано имя")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Длина строки должна быть от 3 символов")]
 
@@ -32,5 +33,7 @@ namespace Test_Web_API.Models
         public string Salt { get; set; }
         [Column("ConnectionID")]
         public string ConnectionID { get; set; }
+
+        public string Token { get; set; }
     }
 }
