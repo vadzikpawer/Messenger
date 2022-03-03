@@ -1,40 +1,17 @@
-# API for messenger
+# Messanger by Vadzik
 
-## Что реализовано:
-	Получение и отправка сообщений на сервер и сохранение их в ДБ
-	Регистрация и получение информации о пользователе
+*Messanger with modern design*
+> yeah really modern, all coincedence's are random
 
-### Как использовать
-##### Для пользователей:
-GET запрос - адрессервера/api/users/all -- получение информации о всех пользователях
+You can:  
+- write messages to other people or to yourself(**suprise???**)
+- send sticker's to people
+- see who is online
+- there is autologin function
+- change themes(there is dark and light, **but who uses last?**)
+- see date and time of messages
 
-------------
+> **And it ALL work on websockets**
 
-
-POST запрос - адрессервера/api/users/getuser -- получение информации о конкретном пользователе, в теле запроса передается Name/email и Pass в виде JSON
-
-------------
-
-
-POST запрос - адрессервера/api/users/adduser -- добавления пользователя, в теле запроса передается name, email, age, pass в виде JSON
-
-------------
-
-
-Есть еще PUT и DELETE запросы, но они еще не сделаны
-
-##### Для сообщений:
-POST запрос - адрессервера/api/messages/get -- получение всех сообщений от одного пользователя для другого, в теле запроса передается from и to в виде JSON, возвращает все сообщения в JSON
-
-------------
-
-
-POST запрос - адрессервера/api/messages/add -- добавления сообщения, в теле запроса передается from, to, text в виде JSON
-
-------------
-
-
-Есть еще PUT и DELETE запросы, но они еще не сделаны
-
-> Еще реализованы всякие проверки, типа: нельзя добавить пользователей с одинаковыми именами/Email, при регистрации обязательно должны быть заполнены поля и т.д.(вы понимаете откуда у меня мания на эти проверки)
-
+Choose you messanger with mind.
+===============================
