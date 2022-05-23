@@ -18,9 +18,16 @@ Choose you messanger with mind.
 
 ![Main Window](/Images/Screenshot(1).png)
 
+**Startup window**
+
 ![Main Window](/Images/Screenshot(2).png)
+
+**Login window**
 
 ![Main Window](/Images/Screenshot(3).png)
 
+**Main window**
+
 ![Main Window](/Images/Screenshot(4).png)
 
+**Dialog window**
